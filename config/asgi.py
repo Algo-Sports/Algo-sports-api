@@ -1,5 +1,5 @@
 """
-ASGI config for algo_sports_api project.
+ASGI config for algo_sports project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -14,9 +14,9 @@ from pathlib import Path
 from django.core.asgi import get_asgi_application
 
 # This allows easy placement of apps within the interior
-# algo_sports_api directory.
+# algo_sports directory.
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
-sys.path.append(str(ROOT_DIR / "algo_sports_api"))
+sys.path.append(str(ROOT_DIR / "algo_sports"))
 
 # If DJANGO_SETTINGS_MODULE is unset, default to the local settings
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")

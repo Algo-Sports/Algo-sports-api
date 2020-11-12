@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: algo_sports_api_local_django
+    image: algo_sports_local_django
     container_name: django
     depends_on:
       - postgres
@@ -26,59 +26,10 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: algo_sports_api_production_postgres
+    image: algo_sports_production_postgres
     container_name: postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
-
-  docs:
-    image: algo_sports_api_local_docs
-    container_name: docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./algo_sports_api:/app/algo_sports_api:z
-    ports:
-      - "7000:7000"
-
-  redis:
-    image: redis:5.0
-    container_name: redis
-
-  celeryworker:
-    <<: *django
-    image: algo_sports_api_local_celeryworker
-    container_name: celeryworker
-    depends_on:
-      - redis
-      - postgres
-      
-    ports: []
-    command: /start-celeryworker
-
-  celerybeat:
-    <<: *django
-    image: algo_sports_api_local_celerybeat
-    container_name: celerybeat
-    depends_on:
-      - redis
-      - postgres
-      
-    ports: []
-    command: /start-celerybeat
-
-  flower:
-    <<: *django
-    image: algo_sports_api_local_flower
-    container_name: flower
-    ports:
-      - "5555:5555"
-    command: /start-flower

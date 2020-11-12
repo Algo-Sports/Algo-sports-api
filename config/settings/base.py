@@ -6,8 +6,8 @@ from pathlib import Path
 import environ
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# algo_sports_api/
-APPS_DIR = ROOT_DIR / "algo_sports_api"
+# algo_sports/
+APPS_DIR = ROOT_DIR / "algo_sports"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -75,7 +75,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "algo_sports_api.users.apps.UsersConfig",
+    "algo_sports.users.apps.UsersConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -84,7 +84,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "algo_sports_api.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "algo_sports.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "algo_sports_api.utils.context_processors.settings_context",
+                "algo_sports.utils.context_processors.settings_context",
             ],
         },
     }
@@ -286,9 +286,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "algo_sports_api.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "algo_sports.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "algo_sports_api.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "algo_sports.users.adapters.SocialAccountAdapter"
 # django-compressor
 # ------------------------------------------------------------------------------
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation

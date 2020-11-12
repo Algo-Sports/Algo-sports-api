@@ -38,7 +38,6 @@ def runserver():
     if env.target == DEV:
         if env.USE_DOCKER == "yes":
             local("docker-compose -f local.yml up")
-        else:
-            with shell_env(DJANGO_READ_DOT_ENV_FILE="True"):
-                local("./manage.py migrate")
-                local("./manage.py runserver")
+        with shell_env(DJANGO_READ_DOT_ENV_FILE="True"):
+            local("./manage.py migrate")
+            local("./manage.py runserver")
