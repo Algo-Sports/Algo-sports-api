@@ -41,3 +41,10 @@ def runserver():
         with shell_env(DJANGO_READ_DOT_ENV_FILE="True"):
             local("./manage.py migrate")
             local("./manage.py runserver")
+
+
+def makemessages(locale):
+    if locale:
+        local(f"./manage.py makemessages -i venv -l {locale}")
+    else:
+        print("usage: fab makemessages:locale")
