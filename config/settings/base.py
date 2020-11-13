@@ -39,7 +39,7 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
 USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-USE_TZ = True
+USE_TZ = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 
@@ -81,8 +81,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "algo_sports.codes.apps.CodesConfig",
+    "algo_sports.games.apps.GamesConfig",
     "algo_sports.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

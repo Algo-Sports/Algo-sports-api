@@ -2,6 +2,6 @@ from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 
 
-class UsersConfig(AppConfig):
-    name = "algo_sports.users"
-    verbose_name = _("Users")
+class GamesConfig(AppConfig):
+    name = "algo_sports.games"
+    verbose_name = _("Games")
