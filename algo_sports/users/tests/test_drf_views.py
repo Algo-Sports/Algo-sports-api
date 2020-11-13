@@ -1,8 +1,8 @@
 import pytest
 from django.test import RequestFactory
 
-from algo_sports.users.api.views import UserViewSet
 from algo_sports.users.models import User
+from algo_sports.users.views import UserViewSet
 
 pytestmark = pytest.mark.django_db
 
