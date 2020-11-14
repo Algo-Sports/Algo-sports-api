@@ -1,4 +1,5 @@
-from fabric.api import env, local
+from fabric.api import env
+from fabric.api import local as fabric_local
 from fabric.context_managers import shell_env
 
 DEV = "dev"
@@ -27,6 +28,16 @@ def prod():
     env.target = PRODUCTION
 
 
+def local(string):
+    if env.target == STAGING:
+        fabric_local(string)
+    elif env.target == PRODUCTION:
+        fabric_local(string)
+    elif env.target == DEV:
+        with shell_env(DJANGO_READ_DOT_ENV_FILE="True"):
+            fabric_local(string)
+
+
 def build():
     if env.target == DEV:
         local("docker-compose -f local.yml build")
@@ -38,7 +49,7 @@ def runserver():
     if env.target == DEV:
         if env.USE_DOCKER == "yes":
             local("docker-compose -f local.yml up")
-        with shell_env(DJANGO_READ_DOT_ENV_FILE="True"):
+        else:
             local("./manage.py migrate")
             local("./manage.py runserver")
 
