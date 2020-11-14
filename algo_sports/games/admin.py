@@ -36,7 +36,6 @@ class GameRoomAdmin(admin.ModelAdmin):
         "created_at",
         "finished_at",
     ]
-    search_fields = []
     list_filter = [
         "status",
     ]

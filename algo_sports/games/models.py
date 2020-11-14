@@ -6,8 +6,6 @@ from django.utils.translation import gettext_lazy as _
 class GameInfo(models.Model):
     """Information of Game"""
 
-    gameinfo_id = models.AutoField(primary_key=True)
-
     title = models.CharField(_("Game title"), max_length=50)
     version = models.CharField(_("Game Version"), max_length=10)
     description = models.TextField(_("Game describtion"))
@@ -23,15 +21,9 @@ class GameInfo(models.Model):
     def __str__(self) -> str:
         return f"{self.title} - v{self.version}"
 
-    @property
-    def id(self):
-        return self.gameinfo_id
-
 
 class GameRoom(models.Model):
     """Room for storing game status"""
-
-    gameroom_id = models.AutoField(primary_key=True)
 
     gameinfo_id = models.ForeignKey(
         GameInfo,
@@ -46,10 +38,6 @@ class GameRoom(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id}. {self.gameinfo} ({self.status})"
-
-    @property
-    def id(self):
-        return self.gameroom_id
 
     @property
     def gameinfo(self):

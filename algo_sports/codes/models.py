@@ -11,18 +11,16 @@ User = get_user_model()
 class UserCode(models.Model):
     """Code as User"""
 
-    usercode_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    gamerooms = models.ManyToManyField(
+        GameRoom, related_name="usercodes", through="GameCodes"
+    )
 
     programming_language = models.CharField(_("Programming language"), max_length=30)
     code = models.TextField(_("Submitted code"))
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    @property
-    def id(self):
-        return self.usercode_id
 
     @property
     def user(self):
@@ -32,7 +30,6 @@ class UserCode(models.Model):
 class JudgementCode(models.Model):
     """Code as Judger"""
 
-    judgementcode_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     gameinfo_id = models.ForeignKey(
         GameInfo,
@@ -48,10 +45,6 @@ class JudgementCode(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
-    def id(self):
-        return self.judgementcode_id
-
-    @property
     def user(self):
         return self.gameinfo_id
 
@@ -63,7 +56,6 @@ class JudgementCode(models.Model):
 class GameCodes(models.Model):
     """ManyToMany Through Model for GameInfo and UserCode"""
 
-    gamecodes_id = models.AutoField(primary_key=True)
     usercode_id = models.ForeignKey(UserCode, on_delete=models.PROTECT)
     gameroom_id = models.ForeignKey(GameRoom, on_delete=models.PROTECT)
 
@@ -73,9 +65,8 @@ class GameCodes(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(blank=True, null=True)
 
-    @property
-    def id(self):
-        return self.gamecodes_id
+    class Meta:
+        db_table = "game_codes_through"
 
     @property
     def usercode(self):
