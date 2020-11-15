@@ -25,16 +25,45 @@ class GameInfo(models.Model):
 class GameRoom(models.Model):
     """Room for storing game status"""
 
+    class GameType(models.TextChoices):
+        GENERAL = "GE", _("General")
+        PRACTICE = "PR", _("Practice")
+        RANKING = "RA", _("Ranking")
+
+    class GameStatus(models.TextChoices):
+        NOT_STARTED = "NS", _("Not started")
+        FINISHED = "FN", _("Finished")
+        ERROR_OCCURED = "EO", _("Error occured")
+
     gameinfo_id = models.ForeignKey(
         GameInfo,
         verbose_name="Game information",
         on_delete=models.PROTECT,
         related_name="game_rooms",
     )
-    status = models.PositiveSmallIntegerField(_("Game status"), default=False)
+
+    type = models.CharField(
+        _("Game Type"),
+        max_length=2,
+        choices=GameType.choices,
+        default=GameType.GENERAL,
+    )
+
+    status = models.CharField(
+        _("Game status"),
+        max_length=2,
+        choices=GameStatus.choices,
+        default=GameStatus.NOT_STARTED,
+    )
+
+    setting = JSONField(
+        _("Additional setting for GameRoom"),
+        blank=True,
+        default=dict,
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return f"{self.id}. {self.gameinfo} ({self.status})"
