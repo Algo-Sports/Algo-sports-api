@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from algo_sports.games.models import GameInfo, GameRoom
+from algo_sports.utils.fileds import JSONField
 
 User = get_user_model()
 
