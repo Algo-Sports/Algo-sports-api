@@ -81,6 +81,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "algo_sports.blogs.apps.BlogConfig",
     "algo_sports.codes.apps.CodesConfig",
     "algo_sports.games.apps.GamesConfig",
     "algo_sports.users.apps.UsersConfig",
