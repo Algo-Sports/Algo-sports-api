@@ -74,3 +74,7 @@ class GameRoom(models.Model):
     @property
     def gameinfo(self):
         return self.gameinfo_id
+
+    @property
+    def participantes(self):
+        return self.codes.all()

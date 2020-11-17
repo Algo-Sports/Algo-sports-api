@@ -13,7 +13,7 @@ class UserCode(models.Model):
 
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     gamerooms = models.ManyToManyField(
-        GameRoom, related_name="usercodes", through="GameCodes"
+        GameRoom, related_name="usercodes", through="CodeRoomRelation"
     )
 
     programming_language = models.CharField(_("Programming language"), max_length=30)
@@ -53,7 +53,7 @@ class JudgementCode(models.Model):
         return self.gameinfo_id
 
 
-class GameCodes(models.Model):
+class CodeRoomRelation(models.Model):
     """ManyToMany Through Model for GameInfo and UserCode"""
 
     usercode_id = models.ForeignKey(UserCode, on_delete=models.PROTECT)
@@ -66,7 +66,7 @@ class GameCodes(models.Model):
     finished_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = "game_codes_through"
+        db_table = "code_room_relation"
 
     @property
     def usercode(self):
