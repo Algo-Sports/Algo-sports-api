@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from algo_sports.games.models import GameInfo, GameRoom
-from algo_sports.utils.fileds import JSONField
 
 User = get_user_model()
 
@@ -60,10 +59,10 @@ class CodeRoomRelation(models.Model):
     gameroom_id = models.ForeignKey(GameRoom, on_delete=models.PROTECT)
 
     score = models.IntegerField(_("Game score"))
-    history = JSONField(_("Game history"))
+    history = models.JSONField(_("Game history"))
 
     created_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         db_table = "code_room_relation"

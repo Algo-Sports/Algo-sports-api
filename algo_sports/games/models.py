@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from algo_sports.utils.fileds import JSONField
-
 
 class GameInfo(models.Model):
     """Information of Game"""
@@ -14,7 +12,7 @@ class GameInfo(models.Model):
     min_users = models.PositiveSmallIntegerField(_("Minimum User number"))
     max_users = models.PositiveSmallIntegerField(_("Maximum User number"))
 
-    extra_info = JSONField(_("Additional information of Game"))
+    extra_info = models.JSONField(_("Additional information of Game"))
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -59,7 +57,7 @@ class GameRoom(models.Model):
         default=GameStatus.NOT_STARTED,
     )
 
-    setting = JSONField(
+    setting = models.JSONField(
         _("Additional setting for GameRoom"),
         blank=True,
         default=dict,
