@@ -12,6 +12,9 @@ SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
     default="MVSd8gpW9BYJBi1UZ8Ar11JUqecYPojiGzH9vJ25dE7q0eqN3uAIoZVtSQ0CvSdR",
 )
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ["testserver", "localhost", "0.0.0.0", "127.0.0.1"]
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
