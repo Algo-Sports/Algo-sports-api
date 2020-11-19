@@ -1,15 +1,15 @@
-from factory import Faker, fuzzy
+from factory import Faker, Sequence, fuzzy
 from factory.declarations import SubFactory
 from factory.django import DjangoModelFactory
 
 from algo_sports.blogs.models import Blog, Comment, Post
 from algo_sports.users.tests.factories import UserFactory
+from algo_sports.utils.choices import PermissionChoices
 
 
 class BlogFactory(DjangoModelFactory):
-    category = Faker("word")
-    print(Blog.permission_choices)
-    permission = fuzzy.FuzzyChoice(Blog.permission_choices())
+    category = Sequence(lambda n: f"Category {n}")
+    permission = fuzzy.FuzzyChoice(PermissionChoices.values)
     description = Faker("sentence")
 
     class Meta:
