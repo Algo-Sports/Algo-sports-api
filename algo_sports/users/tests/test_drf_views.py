@@ -1,8 +1,8 @@
 import pytest
 from django.test import RequestFactory
 
-from algo_sports.users.api.views import UserViewSet
 from algo_sports.users.models import User
+from algo_sports.users.views import UserViewSet
 
 pytestmark = pytest.mark.django_db
 
@@ -28,6 +28,7 @@ class TestUserViewSet:
 
         assert response.data == {
             "username": user.username,
+            "language": user.language,
             "email": user.email,
             "name": user.name,
             "url": f"http://testserver/api/users/{user.username}/",
