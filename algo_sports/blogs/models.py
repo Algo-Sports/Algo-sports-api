@@ -7,10 +7,9 @@ User = get_user_model()
 
 
 class Blog(models.Model):
-    category = models.CharField("Blog cateogry", max_length=2)
-    permission = models.CharField(
+    category = models.SlugField("Blog cateogry", max_length=2, unique=True)
+    permission = models.PositiveSmallIntegerField(
         "Blog permission",
-        max_length=2,
         choices=PermissionChoices.choices,
         default=PermissionChoices.ALL,
     )
@@ -20,16 +19,14 @@ class Blog(models.Model):
         ordering = ["category"]
 
     def __str__(self) -> str:
-        return f"{self.category} ({self.permission})"
-
-    @classmethod
-    def permission_choices(cls):
-        """ permission choices """
-        return PermissionChoices.choices
+        return f"{self.category}"
 
     @property
     def gameinfo(self):
         return self.gameinfo_id
+
+    def get_posts(self):
+        return self.posts.all()
 
 
 class Post(models.Model):
@@ -44,7 +41,7 @@ class Post(models.Model):
     )
     blog_id = models.ForeignKey(
         Blog,
-        verbose_name="Post of comment",
+        verbose_name="Blog of post",
         null=True,
         on_delete=models.SET_NULL,
         related_name="posts",
