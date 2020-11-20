@@ -1,15 +1,21 @@
 import pytest
-from django.test import RequestFactory
+from django.urls.base import reverse
+from rest_framework.test import APIClient, APIRequestFactory
 
-from algo_sports.users.models import User
+from algo_sports.users.serializers import UserSerializer
+from algo_sports.users.tests.factories import UserFactory
 from algo_sports.users.views import UserViewSet
 
 pytestmark = pytest.mark.django_db
 
 
 class TestUserViewSet:
-    def test_get_queryset(self, user: User, rf: RequestFactory):
+    def test_get_queryset(self):
         view = UserViewSet()
+
+        user = UserFactory()
+
+        rf = APIRequestFactory()
         request = rf.get("/fake-url/")
         request.user = user
 
@@ -17,19 +23,15 @@ class TestUserViewSet:
 
         assert user in view.get_queryset()
 
-    def test_me(self, user: User, rf: RequestFactory):
-        view = UserViewSet()
-        request = rf.get("/fake-url/")
-        request.user = user
+    def test_me(self):
+        client = APIClient()
 
-        view.request = request
+        users = UserFactory.create_batch(10)
 
-        response = view.me(request)
+        user_me_url = reverse("api:user-me")
+        for user in users:
+            client.force_authenticate(user=user)
+            response = client.get(user_me_url)
 
-        assert response.data == {
-            "username": user.username,
-            "language": user.language,
-            "email": user.email,
-            "name": user.name,
-            "url": f"http://testserver/api/users/{user.username}/",
-        }
+            serializer = UserSerializer(instance=user)
+            assert serializer.data == response.json()
