@@ -61,5 +61,8 @@ INSTALLED_APPS += [
 
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
-# Your stuff...
+
+# django-cors-headers
 # ------------------------------------------------------------------------------
+# https://github.com/adamchainz/django-cors-headers
+CORS_URLS_REGEX = r"^/api/.*$"
