@@ -9,25 +9,11 @@ USE_DOCKER = "no"
 
 # 사용할 환경
 env.target = DEV
-env.USE_DOCKER = "no"
+env.compose = "local.yml"
 
 
-def docker():
-    env.USE_DOCKER = "yes"
-
-
-def dev():
-    env.target = DEV
-
-
-def staging():
-    env.target = STAGING
-
-
-def prod():
-    env.target = PRODUCTION
-
-
+# 커스텀 local 메소드
+# ----------------------------------------------------------------
 def local(string):
     if env.target == STAGING:
         fabric_local(string)
@@ -38,24 +24,39 @@ def local(string):
             fabric_local(string)
 
 
-def build():
-    if env.target == DEV:
-        local("docker-compose -f local.yml build")
-    elif env.target in [STAGING, PRODUCTION]:
-        local("docker-compose -f production.yml build")
+# 환경 세팅 커맨드
+# ----------------------------------------------------------------
+def dev():
+    env.target = DEV
+    env.compose = "local.yml"
 
 
-def runserver():
-    if env.target == DEV:
-        if env.USE_DOCKER == "yes":
-            local("docker-compose -f local.yml up")
-        else:
-            local("./manage.py migrate")
-            local("./manage.py runserver")
+def staging():
+    env.target = STAGING
+    env.compose = "production.yml"
 
 
+def prod():
+    env.target = PRODUCTION
+    env.compose = "production.yml"
+
+
+# 장고 커맨드
+# ----------------------------------------------------------------
 def makemessages(locale):
-    if locale:
-        local(f"./manage.py makemessages -i venv -l {locale}")
-    else:
-        print("usage: fab makemessages:locale")
+    # locale에 해당하는 번역 파일 생성
+    local(f"./manage.py makemessages -i venv -l {locale}")
+
+
+# Docker 커맨드
+# ----------------------------------------------------------------
+def build():
+    local(f"docker-compose -f {env.compose} build")
+
+
+def up(app="", option=""):
+    local(f"docker-compose -f {env.compose} up {option} {app}")
+
+
+def down(app="", option=""):
+    local(f"docker-compose -f {env.compose} down {option} {app}")

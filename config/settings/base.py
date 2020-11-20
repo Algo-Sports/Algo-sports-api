@@ -75,6 +75,7 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "django_celery_beat",
+    "django_filters",
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
@@ -83,6 +84,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "algo_sports.blogs.apps.BlogConfig",
     "algo_sports.codes.apps.CodesConfig",
     "algo_sports.games.apps.GamesConfig",
     "algo_sports.users.apps.UsersConfig",
@@ -309,6 +311,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
