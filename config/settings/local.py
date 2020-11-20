@@ -52,11 +52,17 @@ if env("USE_DOCKER", default="") == "yes":
 # django-extensions
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
-INSTALLED_APPS += ["django_extensions"]  # noqa F405
+INSTALLED_APPS += [
+    "django_extensions",
+    "drf_yasg",
+]  # noqa F405
 # Celery
 # ------------------------------------------------------------------------------
 
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
-# Your stuff...
+
+# django-cors-headers
 # ------------------------------------------------------------------------------
+# https://github.com/adamchainz/django-cors-headers
+CORS_URLS_REGEX = r"^/api/.*$"

@@ -22,11 +22,11 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
     queryset = User.objects.all()
     lookup_field = "username"
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self):
         return self.queryset.filter(id=self.request.user.id)
 
     @action(detail=False, methods=["GET"])
-    def me(self, request):
+    def me(self, request, *args, **kwargs):
         serializer = self.get_serializer(request.user)
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 

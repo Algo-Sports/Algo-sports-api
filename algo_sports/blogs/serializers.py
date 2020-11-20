@@ -39,6 +39,15 @@ class ReCommentSerializer(serializers.ModelSerializer):
         model = Comment
         exclude = ["post_id", "user_id", "parent_id"]
 
+    def to_representation(self, instance):
+        """ Deleted comment의 전송되는 필드 제한 """
+        representation = super().to_representation(instance)
+        if instance.deleted:
+            exclude_fields = ("user", "content")
+            for field in exclude_fields:
+                representation.pop(field)
+        return representation
+
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UsernameSerializer(read_only=True)
@@ -48,3 +57,12 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         exclude = ["post_id", "user_id", "parent_id"]
+
+    def to_representation(self, instance):
+        """ Deleted comment의 전송되는 필드 제한 """
+        representation = super().to_representation(instance)
+        if instance.deleted:
+            exclude_fields = ("user", "content")
+            for field in exclude_fields:
+                representation.pop(field)
+        return representation

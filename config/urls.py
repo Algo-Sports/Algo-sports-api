@@ -38,6 +38,9 @@ urlpatterns += [
     path("api/auth/registration/", include("dj_rest_auth.registration.urls")),
 ]
 
+# Swagger URLS
+urlpatterns += [path("", include("config.swagger_router"))]
+
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
     # these url in browser to see how these error pages look like.

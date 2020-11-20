@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from algo_sports.blogs.filters import BlogFilter, CommentFilter, PostFilter
+from algo_sports.blogs.permissions import IsCommentNotDeleted
 from algo_sports.utils.paginations import SizeQueryPagination
 from algo_sports.utils.permissions import IsOwnerOrReadOnly, IsSuperUser
 
@@ -125,7 +126,11 @@ class CommentViewSet(
 
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly, IsSuperUser | IsOwnerOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsSuperUser | IsOwnerOrReadOnly,
+        IsCommentNotDeleted,
+    ]
     lookup_field = "pk"
     pagination_class = SizeQueryPagination
     filterset_class = CommentFilter
@@ -134,16 +139,22 @@ class CommentViewSet(
         "add_recomment": ReCommentSerializer,
     }
 
+    def get_queryset(self):
+        queryset = self.queryset.filter(parent_id__isnull=True)
+        return queryset
+
     def get_serializer_class(self):
         serializer = self.action_serializer_classes.get(self.action)
         if serializer:
             return serializer
         return super().get_serializer_class()
 
-    def delete(self, request, *args, **kwargs):
+    def destroy(self, request, *args, **kwargs):
         comment = self.get_object()
-        comment.deleted = True
+        # if not comment.deleted:
+        comment.fake_delete()
         comment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=["POST"])
     def add_recomment(self, request, *args, **kwargs):

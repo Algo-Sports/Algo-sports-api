@@ -7,13 +7,13 @@ User = get_user_model()
 
 
 class Blog(models.Model):
-    category = models.SlugField("Blog cateogry", max_length=2, unique=True)
+    category = models.SlugField("Blog cateogry", max_length=50, unique=True)
     permission = models.PositiveSmallIntegerField(
         "Blog permission",
         choices=PermissionChoices.choices,
         default=PermissionChoices.ALL,
     )
-    description = models.TextField("Blog description", max_length=2)
+    description = models.CharField("Blog description", max_length=200)
 
     class Meta:
         ordering = ["category"]
@@ -30,8 +30,6 @@ class Blog(models.Model):
 
 
 class Post(models.Model):
-    title = models.TextField("Post title")
-
     user_id = models.ForeignKey(
         User,
         verbose_name="Post author",
@@ -47,6 +45,7 @@ class Post(models.Model):
         related_name="posts",
     )
 
+    title = models.CharField("Post title", max_length=200)
     content = models.TextField("Post content")
 
     created_at = models.DateTimeField(auto_now_add=True)
