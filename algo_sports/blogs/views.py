@@ -139,6 +139,10 @@ class CommentViewSet(
         "add_recomment": ReCommentSerializer,
     }
 
+    def get_queryset(self):
+        queryset = self.queryset.filter(parent_id__isnull=True)
+        return queryset
+
     def get_serializer_class(self):
         serializer = self.action_serializer_classes.get(self.action)
         if serializer:

@@ -52,6 +52,7 @@ class ReCommentSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = UsernameSerializer(read_only=True)
     post = serializers.PrimaryKeyRelatedField(read_only=True)
+    recomments = ReCommentSerializer(source="get_childs", many=True, required=False)
 
     class Meta:
         model = Comment
