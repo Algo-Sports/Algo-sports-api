@@ -39,12 +39,29 @@ class ReCommentSerializer(serializers.ModelSerializer):
         model = Comment
         exclude = ["post_id", "user_id", "parent_id"]
 
+    def to_representation(self, instance):
+        """ Deleted comment의 전송되는 필드 제한 """
+        representation = super().to_representation(instance)
+        if instance.deleted:
+            exclude_fields = ("user", "content")
+            for field in exclude_fields:
+                representation.pop(field)
+        return representation
+
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UsernameSerializer(read_only=True)
     post = serializers.PrimaryKeyRelatedField(read_only=True)
-    recomments = ReCommentSerializer(source="get_childs", many=True, required=False)
 
     class Meta:
         model = Comment
         exclude = ["post_id", "user_id", "parent_id"]
+
+    def to_representation(self, instance):
+        """ Deleted comment의 전송되는 필드 제한 """
+        representation = super().to_representation(instance)
+        if instance.deleted:
+            exclude_fields = ("user", "content")
+            for field in exclude_fields:
+                representation.pop(field)
+        return representation
