@@ -20,7 +20,7 @@ class UserCodeSerializer(serializers.ModelSerializer):
 
 
 class JudgementCodeSerializer(serializers.ModelSerializer):
-    user = UsernameSerializer(read_only=True)
+    user = UsernameSerializer(source="user_id", read_only=True)
 
     class Meta:
         model = JudgementCode
