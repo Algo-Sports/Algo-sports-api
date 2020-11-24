@@ -1,4 +1,4 @@
-from factory import Faker, Sequence
+from factory import Faker, Sequence, fuzzy
 from factory.declarations import SubFactory
 from factory.django import DjangoModelFactory
 
@@ -19,6 +19,7 @@ class UserCodeFactory(DjangoModelFactory):
 
     programming_language = SubFactory(ProgrammingLanguageFactory)
     code = Faker("sentence")
+    is_active = fuzzy.FuzzyInteger(0, 1)
 
     class Meta:
         model = UserCode

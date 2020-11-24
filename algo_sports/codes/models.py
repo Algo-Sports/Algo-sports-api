@@ -29,6 +29,8 @@ class UserCode(models.Model):
     )
     code = models.TextField(_("Submitted code"))
 
+    is_active = models.BooleanField(_("Is code active?"), default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

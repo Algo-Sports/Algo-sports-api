@@ -16,6 +16,7 @@ class UserCodeAdmin(admin.ModelAdmin):
         "user_id",
         "programming_language",
         "code",
+        "is_active",
         "created_at",
         "updated_at",
     )

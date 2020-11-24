@@ -14,6 +14,7 @@ class UserCodeSerializer(serializers.ModelSerializer):
             "user",
             "programming_language",
             "code",
+            "is_active",
             "created_at",
             "updated_at",
         ]
