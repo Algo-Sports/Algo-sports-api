@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from algo_sports.codes.filters import JudgementCodeFilter, UserCodeFilter
-from algo_sports.utils.permissions import IsOwnerOrReadOnly, IsSuperUser
+from algo_sports.utils.permissions import IsAdminUser, IsOwnerOrReadOnly, IsSuperUser
 
 from .models import JudgementCode, UserCode
 from .serializers import JudgementCodeSerializer, UserCodeSerializer
