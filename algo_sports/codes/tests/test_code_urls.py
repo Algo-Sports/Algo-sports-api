@@ -1,7 +1,7 @@
 import pytest
 from django.urls import resolve, reverse
 
-from algo_sports.codes.tests.factories import UserCodeFactory
+from algo_sports.codes.tests.factories import JudgementCodeFactory, UserCodeFactory
 from algo_sports.utils.test.compare_url import compare_url
 
 pytestmark = pytest.mark.django_db
@@ -28,7 +28,7 @@ def test_usercode_url():
 
 
 def test_judgementcode_url():
-    judgementcode = UserCodeFactory()
+    judgementcode = JudgementCodeFactory()
     lookup_field = "pk"
     lookup_value = judgementcode.pk
     middle_url = "codes/judegement"
