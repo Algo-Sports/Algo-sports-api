@@ -12,6 +12,10 @@ class User(AbstractUser):
     language = CharField(_("Language of User"), blank=True, max_length=30)
 
     @property
+    def is_admin(self):
+        return self.is_superuser or self.is_staff
+
+    @property
     def level(self):
         user_level = 1
         if self.is_superuser:
