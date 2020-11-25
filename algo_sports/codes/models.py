@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -8,16 +7,29 @@ from algo_sports.games.models import GameInfo, GameRoom
 User = get_user_model()
 
 
+class ProgrammingLanguage(models.Model):
+    name = models.SlugField(_("Programming language"), max_length=50, unique=True)
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+
 class UserCode(models.Model):
     """Code as User"""
 
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     gamerooms = models.ManyToManyField(
-        GameRoom, related_name="usercodes", through="GameCodes"
+        GameRoom, related_name="usercodes", through="CodeRoomRelation"
     )
 
-    programming_language = models.CharField(_("Programming language"), max_length=30)
+    programming_language = models.ForeignKey(
+        ProgrammingLanguage,
+        verbose_name=_("Programming language"),
+        on_delete=models.PROTECT,
+    )
     code = models.TextField(_("Submitted code"))
+
+    is_active = models.BooleanField(_("Is code active?"), default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,12 +45,16 @@ class JudgementCode(models.Model):
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
     gameinfo_id = models.ForeignKey(
         GameInfo,
-        verbose_name="Game information",
+        verbose_name=_("Game information"),
         on_delete=models.PROTECT,
         related_name="judgement_codes",
     )
 
-    programming_language = models.CharField(_("Programming language"), max_length=30)
+    programming_language = models.ForeignKey(
+        ProgrammingLanguage,
+        verbose_name=_("Programming language"),
+        on_delete=models.PROTECT,
+    )
     code = models.TextField(_("Submitted code"))
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -53,20 +69,20 @@ class JudgementCode(models.Model):
         return self.gameinfo_id
 
 
-class GameCodes(models.Model):
+class CodeRoomRelation(models.Model):
     """ManyToMany Through Model for GameInfo and UserCode"""
 
     usercode_id = models.ForeignKey(UserCode, on_delete=models.PROTECT)
     gameroom_id = models.ForeignKey(GameRoom, on_delete=models.PROTECT)
 
     score = models.IntegerField(_("Game score"))
-    history = JSONField(_("Game history"))
+    history = models.JSONField(_("Game history"))
 
     created_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = "game_codes_through"
+        db_table = "code_room_relation"
 
     @property
     def usercode(self):

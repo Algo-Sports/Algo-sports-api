@@ -32,9 +32,10 @@ class GameRoomAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "gameinfo",
+        "type",
         "status",
         "created_at",
-        "finished_at",
+        "updated_at",
     ]
     list_filter = [
         "status",

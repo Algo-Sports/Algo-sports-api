@@ -1,6 +1,7 @@
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from .choices import GameStatus, GameType
 
 
 class GameInfo(models.Model):
@@ -13,7 +14,7 @@ class GameInfo(models.Model):
     min_users = models.PositiveSmallIntegerField(_("Minimum User number"))
     max_users = models.PositiveSmallIntegerField(_("Maximum User number"))
 
-    extra_info = JSONField(_("Additional information of Game"))
+    extra_info = models.JSONField(_("Additional information of Game"))
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,10 +32,29 @@ class GameRoom(models.Model):
         on_delete=models.PROTECT,
         related_name="game_rooms",
     )
-    status = models.PositiveSmallIntegerField(_("Game status"), default=False)
+
+    type = models.CharField(
+        _("Game Type"),
+        max_length=2,
+        choices=GameType.choices,
+        default=GameType.GENERAL,
+    )
+
+    status = models.CharField(
+        _("Game status"),
+        max_length=2,
+        choices=GameStatus.choices,
+        default=GameStatus.NOT_STARTED,
+    )
+
+    setting = models.JSONField(
+        _("Additional setting for GameRoom"),
+        blank=True,
+        default=dict,
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
-    finished_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return f"{self.id}. {self.gameinfo} ({self.status})"
@@ -42,3 +62,7 @@ class GameRoom(models.Model):
     @property
     def gameinfo(self):
         return self.gameinfo_id
+
+    @property
+    def participantes(self):
+        return self.codes.all()
