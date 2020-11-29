@@ -1,15 +1,15 @@
+from factory import Sequence
 from factory.declarations import SubFactory
 from factory.django import DjangoModelFactory
 from factory.faker import Faker
 from factory.fuzzy import FuzzyChoice, FuzzyInteger
 
 from algo_sports.games.choices import GameStatus, GameType
-from algo_sports.games.models import GameInfo, GameRoom
+from algo_sports.games.models import GameInfo, GameRoom, GameVersion
 
 
 class GameInfoFactory(DjangoModelFactory):
-    title = Faker("sentence")
-    version = Faker("word")
+    title = Sequence(lambda x: f"GameInfo {x}")
     description = Faker("sentence")
 
     min_users = FuzzyInteger(2, 4)
@@ -24,6 +24,13 @@ class GameInfoFactory(DjangoModelFactory):
 
     class Meta:
         model = GameInfo
+
+
+class GameVersionFactory(DjangoModelFactory):
+    gameinfo_id = SubFactory(GameInfoFactory)
+
+    class Meta:
+        model = GameVersion
 
 
 class GameRoomFactory(DjangoModelFactory):
