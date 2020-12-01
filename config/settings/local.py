@@ -66,3 +66,13 @@ CELERY_TASK_EAGER_PROPAGATES = True
 # ------------------------------------------------------------------------------
 # https://github.com/adamchainz/django-cors-headers
 CORS_URLS_REGEX = r"^/api/.*$"
+
+# django-extensions shell_plus
+# ------------------------------------------------------------------------------
+# https://django-extensions.readthedocs.io/en/latest/shell_plus.html
+SHELL_PLUS_IMPORTS = [
+    "from algo_sports.blogs.tests.factories import *",
+    "from algo_sports.codes.tests.factories import *",
+    "from algo_sports.games.tests.factories import *",
+    "from algo_sports.users.tests.factories import *",
+]
