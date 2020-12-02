@@ -1,13 +1,13 @@
-from enum import Enum
 from typing import Union
 
 from django.db import models
+from django.db.models.enums import TextChoices
 from django.utils.translation import gettext_lazy as _
 
 from .choices import GameStatus, GameType
 
 
-class GameVersionType(str, Enum):
+class GameVersionType(TextChoices):
     major = "major"
     minor = "minor"
     micro = "micro"
@@ -70,7 +70,7 @@ class GameInfo(models.Model):
     def update_version(
         self,
         update_type: GameVersionType,
-        change_log: list,
+        change_log: Union[str, list],
         target_version: dict = None,
     ):
         if not self.is_active:
