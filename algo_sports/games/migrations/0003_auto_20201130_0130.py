@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='GameVersion',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('version', models.JSONField(default=algo_sports.games.models.get_default_version, verbose_name='Game Version')),
+                ('version', models.JSONField(default=algo_sports.games.models.make_version, verbose_name='Game Version')),
                 ('change_log', models.JSONField(default=dict, verbose_name='Version change log')),
                 ('is_active', models.BooleanField(default=True, verbose_name='Is this version active?')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
