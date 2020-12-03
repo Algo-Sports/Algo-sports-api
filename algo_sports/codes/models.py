@@ -75,8 +75,8 @@ class CodeRoomRelation(models.Model):
     usercode_id = models.ForeignKey(UserCode, on_delete=models.PROTECT)
     gameroom_id = models.ForeignKey(GameRoom, on_delete=models.PROTECT)
 
-    score = models.IntegerField(_("Game score"))
-    history = models.JSONField(_("Game history"))
+    score = models.IntegerField(_("Game score"), default=0)
+    history = models.JSONField(_("Game history"), default=dict)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(blank=True, null=True)
