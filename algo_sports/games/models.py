@@ -1,11 +1,16 @@
 from typing import Union
 
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Q
 from django.db.models.enums import TextChoices
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from numpy.random import choice
 
 from .choices import GameStatus, GameType
+
+User = get_user_model()
 
 
 class GameVersionType(TextChoices):
@@ -41,6 +46,9 @@ class GameInfo(models.Model):
 
     def __str__(self) -> str:
         return f"{self.title} ({self.total_versions})"
+
+    def get_version(self, version: dict):
+        return self.get_versions().filter(version=version)
 
     def get_versions(self, ordering=False):
         versions = self.versions.all()
@@ -121,7 +129,7 @@ class GameVersion(models.Model):
             "version__major",
         ]
 
-    @property
+    @cached_property
     def gameinfo(self):
         return self.gameinfo_id
 
@@ -196,9 +204,13 @@ class GameRoom(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.id}. {self.gameinfo} ({self.status})"
+        return f"{self.id}. {self.gameversion} ({self.status})"
 
     @property
+    def is_active(self):
+        min_user = self.gameinfo.min_users
+        return self.active_participantes.count() > min_user
+
     @cached_property
     def gameinfo(self):
         return self.gameversion.gameinfo
@@ -209,4 +221,26 @@ class GameRoom(models.Model):
 
     @property
     def participantes(self):
-        return self.codes.all()
+        return self.usercodes.all()
+
+    @property
+    def active_participantes(self):
+        return self.participantes.filter(is_active=True)
+
+    def sample_active_participantes(self, exclude_user):
+        if not self.is_active:
+            return []
+
+        queryset = self.active_participantes
+        actives = queryset.count()
+
+        max_users = self.gameinfo.max_users
+        min_users = self.gameinfo.min_users
+
+        sample_size = min_users
+        if actives >= max_users:
+            sample_size = max_users
+
+        # 균일 추출, 동일값 없음.
+        queryset = queryset.filter(~Q(user_id=exclude_user))
+        return choice(queryset, size=sample_size, replace=False)
