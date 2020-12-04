@@ -2,6 +2,7 @@ from typing import Union
 
 from django.db import models
 from django.db.models.enums import TextChoices
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from .choices import GameStatus, GameType
@@ -164,9 +165,9 @@ class GameVersion(models.Model):
 class GameRoom(models.Model):
     """Room for storing game status"""
 
-    gameinfo_id = models.ForeignKey(
-        GameInfo,
-        verbose_name=_("Game information"),
+    gameversion_id = models.ForeignKey(
+        GameVersion,
+        verbose_name=_("Game Version"),
         on_delete=models.PROTECT,
         related_name="game_rooms",
     )
@@ -198,8 +199,13 @@ class GameRoom(models.Model):
         return f"{self.id}. {self.gameinfo} ({self.status})"
 
     @property
+    @cached_property
     def gameinfo(self):
-        return self.gameinfo_id
+        return self.gameversion.gameinfo
+
+    @cached_property
+    def gameversion(self):
+        return self.gameversion_id
 
     @property
     def participantes(self):

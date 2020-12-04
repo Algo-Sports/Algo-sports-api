@@ -41,7 +41,7 @@ class GameVersionAdmin(admin.ModelAdmin):
 class GameRoomAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "gameinfo_id",
+        "gameversion_id",
         "type",
         "status",
         "setting",
@@ -49,7 +49,7 @@ class GameRoomAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_filter = (
-        "gameinfo_id",
+        "gameversion_id",
         "type",
         "status",
     )
