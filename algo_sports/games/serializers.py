@@ -52,11 +52,19 @@ class GameInfoUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class GameRoomCreateSerializer(serializers.ModelSerializer):
+    version = serializers.JSONField(required=False)
+
+    class Meta:
+        model = GameRoom
+        exclude = ["gameversion_id"]
+
+
 class GameRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameRoom
         fields = [
-            "gameinfo",
+            "gameversion",
             "type",
             "status",
             "setting",
