@@ -10,6 +10,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from algo_sports.codes.serializers import UserCodeSerializer
 from algo_sports.utils.permissions import IsAdminOrReadOnly
 
 from .models import GameInfo, GameRoom, GameVersionType
@@ -17,6 +18,7 @@ from .serializers import (
     GameInfoDetailSerializer,
     GameInfoSerializer,
     GameInfoUpdateSerializer,
+    GameRoomCreateSerializer,
     GameRoomSerializer,
 )
 
@@ -41,6 +43,7 @@ class GameInfoViewSet(
         "retrieve": GameInfoDetailSerializer,
         "update": GameInfoUpdateSerializer,
         "partial_update": GameInfoUpdateSerializer,
+        "create_gameroom": GameRoomCreateSerializer,
     }
 
     def get_serializer_class(self):
@@ -78,20 +81,54 @@ class GameInfoViewSet(
         queryset = queryset.filter(is_active=True)
         return Response(status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["POST"])
+    def create_gameroom(self, request):
+        gameinfo = self.get_object()
+
+        version = request.data.get("version")
+        request.data.pop("version")
+
+        gameversion_id = None
+        if version:
+            gameversion_id = gameinfo.latest_version
+        else:
+            gameversion_id = gameinfo.get_version(version=version)
+
+        serializers = self.get_serializer(data=request.data)
+        serializers.is_valid()
+        serializers.save(gameversion_id=gameversion_id)
+
+        return Response(data=serializers.data, status=status.HTTP_201_CREATED)
+
 
 class GameRoomViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = GameRoomSerializer
     queryset = GameRoom.objects.all()
     lookup_field = "pk"
 
-    @action(detail=True, methods=["GET"])
-    def get_joined_codes(self, request):
-        return Response(status=status.HTTP_200_OK)
+    action_serializer_classes = {
+        "join_room": UserCodeSerializer,
+    }
 
-    @action(detail=True, methods=["GET"])
+    def get_serializer_class(self):
+        serializer = self.action_serializer_classes.get(self.action)
+        if serializer:
+            return serializer
+        return super().get_serializer_class()
+
+    @action(detail=True, methods=["POST"])
     def join_room(self, request):
-        return Response(status=status.HTTP_200_OK)
+        """ Submit user code """
+        gameroom = self.get_object()
+        serializers = self.get_serializer(data=request.data)
+        serializers.is_valie()
+        serializers.save(gamerooms=gameroom)
 
-    @action(detail=False, methods=["POST"])
-    def make_room(self, request):
+        # other_codes = gameroom.sample_active_participantes(
+        #     exclude_user=self.request.user
+        # )
+
+        # gameroom.usercodes.add(other_codes)
+        # usercodes = gameroom.usercodes.all()
+
         return Response(status=status.HTTP_200_OK)
