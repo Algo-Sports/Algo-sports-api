@@ -9,6 +9,10 @@ User = get_user_model()
 
 class ProgrammingLanguage(models.Model):
     name = models.SlugField(_("Programming language"), max_length=50, unique=True)
+    is_active = models.BooleanField(default=False)
+
+    compile_cmd = models.CharField(null=True, blank=True, max_length=500)
+    run_cmd = models.CharField(null=True, blank=True, max_length=500)
 
     def __str__(self) -> str:
         return f"{self.name}"
