@@ -66,8 +66,7 @@ class GameRoomSerializer(serializers.ModelSerializer):
         fields = [
             "gameversion",
             "type",
-            "status",
-            "setting",
+            "extra_setting",
             "created_at",
             "updated_at",
         ]

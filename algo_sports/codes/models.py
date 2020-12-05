@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from algo_sports.games.models import GameInfo, GameRoom
+from algo_sports.games.models import GameInfo, GameRoom, GameMatch
 
 User = get_user_model()
 
@@ -22,8 +22,8 @@ class UserCode(models.Model):
     """Code as User"""
 
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    gamerooms = models.ManyToManyField(
-        GameRoom, related_name="usercodes", through="CodeRoomRelation"
+    gamematchs = models.ManyToManyField(
+        GameMatch, related_name="usercodes", through="MatchCodeRelation"
     )
 
     programming_language = models.ForeignKey(
@@ -73,25 +73,22 @@ class JudgementCode(models.Model):
         return self.gameinfo_id
 
 
-class CodeRoomRelation(models.Model):
-    """ManyToMany Through Model for GameInfo and UserCode"""
+class MatchCodeRelation(models.Model):
+    """ManyToMany Through Model for GameMatch and UserCode"""
 
     usercode_id = models.ForeignKey(UserCode, on_delete=models.PROTECT)
-    gameroom_id = models.ForeignKey(GameRoom, on_delete=models.PROTECT)
-
-    score = models.IntegerField(_("Game score"), default=0)
-    history = models.JSONField(_("Game history"), default=dict)
+    gamematch_id = models.ForeignKey(GameMatch, on_delete=models.PROTECT)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = "code_room_relation"
+        db_table = "match_code_relation"
 
     @property
     def usercode(self):
         return self.usercode_id
 
     @property
-    def gameroom(self):
-        return self.gameroom_id
+    def gamematch(self):
+        return self.gamematch_id

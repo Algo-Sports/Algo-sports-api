@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CodeRoomRelation, JudgementCode, ProgrammingLanguage, UserCode
+from .models import MatchCodeRelation, JudgementCode, ProgrammingLanguage, UserCode
 
 
 @admin.register(ProgrammingLanguage)
@@ -22,7 +22,7 @@ class UserCodeAdmin(admin.ModelAdmin):
     )
     list_filter = ("user_id", "programming_language", "created_at", "updated_at")
     search_fields = ["author"]
-    raw_id_fields = ("gamerooms",)
+    raw_id_fields = ("gamematchs",)
     date_hierarchy = "created_at"
 
     def author(self, obj):
@@ -54,16 +54,14 @@ class JudgementCodeAdmin(admin.ModelAdmin):
         return obj.user.username
 
 
-@admin.register(CodeRoomRelation)
-class CodeRoomRelationAdmin(admin.ModelAdmin):
+@admin.register(MatchCodeRelation)
+class MatchCodeRelationAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "usercode_id",
-        "gameroom_id",
-        "score",
-        "history",
+        "gamematch_id",
         "created_at",
         "updated_at",
     )
-    list_filter = ("usercode_id", "gameroom_id", "created_at", "updated_at")
+    list_filter = ("usercode_id", "gamematch_id", "created_at", "updated_at")
     date_hierarchy = "created_at"

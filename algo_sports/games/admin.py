@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import GameInfo, GameRoom, GameVersion
+from .models import GameInfo, GameMatch, GameRoom, GameVersion
 
 
 @admin.register(GameInfo)
@@ -26,6 +26,7 @@ class GameVersionAdmin(admin.ModelAdmin):
         "gameinfo_id",
         "version",
         "change_log",
+        "default_setting",
         "is_active",
         "created_at",
         "updated_at",
@@ -43,14 +44,30 @@ class GameRoomAdmin(admin.ModelAdmin):
         "id",
         "gameversion_id",
         "type",
-        "status",
-        "setting",
+        "extra_setting",
         "created_at",
         "updated_at",
     )
     list_filter = (
         "gameversion_id",
         "type",
+    )
+    date_hierarchy = "created_at"
+
+
+@admin.register(GameMatch)
+class GameMatchAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "gameroom_id",
+        "history",
+        "score",
+        "status",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = (
+        "gameroom_id",
         "status",
     )
     date_hierarchy = "created_at"

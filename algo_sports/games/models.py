@@ -6,7 +6,6 @@ from django.db.models import Q
 from django.db.models.enums import TextChoices
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from numpy.random import choice
 
 from .choices import GameStatus, GameType
 
@@ -113,7 +112,8 @@ class GameVersion(models.Model):
 
     version = models.JSONField(_("Game Version"), default=make_version)
     change_log = models.JSONField(_("Version change log"), default=dict)
-    is_active = models.BooleanField(_("Is this version active?"), default=True)
+    default_setting = models.JSONField(_("Version default setting"), default=dict)
+    is_active = models.BooleanField(_("Is this version active?"), default=True)    
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -187,14 +187,7 @@ class GameRoom(models.Model):
         default=GameType.GENERAL,
     )
 
-    status = models.CharField(
-        _("Game status"),
-        max_length=2,
-        choices=GameStatus.choices,
-        default=GameStatus.NOT_STARTED,
-    )
-
-    setting = models.JSONField(
+    extra_setting = models.JSONField(
         _("Additional setting for GameRoom"),
         blank=True,
         default=dict,
@@ -244,3 +237,39 @@ class GameRoom(models.Model):
         # 균일 추출, 동일값 없음.
         queryset = queryset.filter(~Q(user_id=exclude_user))
         return choice(queryset, size=sample_size, replace=False)
+
+
+class GameMatch(models.Model):
+    """Match in Game room"""
+
+    gameroom_id = models.ForeignKey(
+        GameRoom,
+        verbose_name=_("Game room"),
+        on_delete=models.PROTECT,
+        related_name="game_matchs"
+    )
+
+    history = models.JSONField(
+        _("History in Game Match"),
+        blank = True,
+        default = dict,
+    )
+
+    score = models.IntegerField(
+        _("Match Score"),
+        blank=True,
+        default=0
+    )
+
+    status = models.CharField(
+        _("Game Match Status"),
+        max_length=2,
+        choices=GameStatus.choices,
+        default=GameStatus.NOT_STARTED,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.id}. ({self.status})"

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from algo_sports.users.serializers import UsernameSerializer
 
-from .models import CodeRoomRelation, JudgementCode, UserCode
+from .models import MatchCodeRelation, JudgementCode, UserCode
 
 
 class UserCodeSerializer(serializers.ModelSerializer):
@@ -35,14 +35,12 @@ class JudgementCodeSerializer(serializers.ModelSerializer):
         ]
 
 
-class CodeRoomRelationSerializer(serializers.ModelSerializer):
+class MatchCodeRelationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodeRoomRelation
+        model = MatchCodeRelation
         fields = [
             "usercode",
-            "gameroom",
-            "score",
-            "history",
+            "gamematch",
             "created_at",
             "updated_at",
         ]
