@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from algo_sports.games.models import GameInfo, GameRoom, GameMatch
+from algo_sports.games.models import GameMatch, GameRoom, GameVersion
 
 User = get_user_model()
 
@@ -22,6 +22,9 @@ class UserCode(models.Model):
     """Code as User"""
 
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    gameroom = models.ForeignKey(
+        GameRoom, related_name="usercodes", on_delete=models.PROTECT
+    )
     gamematchs = models.ManyToManyField(
         GameMatch, related_name="usercodes", through="MatchCodeRelation"
     )
@@ -47,9 +50,9 @@ class JudgementCode(models.Model):
     """Code as Judger"""
 
     user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    gameinfo_id = models.ForeignKey(
-        GameInfo,
-        verbose_name=_("Game information"),
+    gameversion_id = models.ForeignKey(
+        GameVersion,
+        verbose_name=_("Game version"),
         on_delete=models.PROTECT,
         related_name="judgement_codes",
     )
@@ -66,11 +69,11 @@ class JudgementCode(models.Model):
 
     @property
     def user(self):
-        return self.gameinfo_id
+        return self.gameversion_id
 
     @property
-    def gameinfo(self):
-        return self.gameinfo_id
+    def gameversion(self):
+        return self.gameversion_id
 
 
 class MatchCodeRelation(models.Model):
