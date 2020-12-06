@@ -10,7 +10,7 @@ class UserCodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserCode
-        fields = "__all__"
+        exclude = ["user_id"]
 
 
 class JudgementCodeSerializer(serializers.ModelSerializer):
@@ -18,15 +18,7 @@ class JudgementCodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JudgementCode
-        fields = [
-            "id",
-            "user",
-            "gameinfo_id",
-            "programming_language",
-            "code",
-            "created_at",
-            "updated_at",
-        ]
+        exclude = ["user_id"]
 
 
 class MatchCodeRelationSerializer(serializers.ModelSerializer):
