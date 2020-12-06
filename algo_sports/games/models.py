@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.db.models.enums import TextChoices
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from numpy import random
 
 from .choices import GameStatus, GameType
 
@@ -113,7 +114,7 @@ class GameVersion(models.Model):
     version = models.JSONField(_("Game Version"), default=make_version)
     change_log = models.JSONField(_("Version change log"), default=dict)
     default_setting = models.JSONField(_("Version default setting"), default=dict)
-    is_active = models.BooleanField(_("Is this version active?"), default=True)    
+    is_active = models.BooleanField(_("Is this version active?"), default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -197,12 +198,12 @@ class GameRoom(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.id}. {self.gameversion} ({self.status})"
+        return f"Room {self.id}. {self.gameversion} ({self.type})"
 
     @property
     def is_active(self):
         min_user = self.gameinfo.min_users
-        return self.active_participantes.count() > min_user
+        return self.active_participants.count() > min_user
 
     @cached_property
     def gameinfo(self):
@@ -213,18 +214,18 @@ class GameRoom(models.Model):
         return self.gameversion_id
 
     @property
-    def participantes(self):
+    def participants(self):
         return self.usercodes.all()
 
     @property
-    def active_participantes(self):
-        return self.participantes.filter(is_active=True)
+    def active_participants(self):
+        return self.participants.filter(is_active=True)
 
-    def sample_active_participantes(self, exclude_user):
+    def sample_active_participants(self, exclude_user):
         if not self.is_active:
             return []
 
-        queryset = self.active_participantes
+        queryset = self.active_participants
         actives = queryset.count()
 
         max_users = self.gameinfo.max_users
@@ -236,7 +237,7 @@ class GameRoom(models.Model):
 
         # 균일 추출, 동일값 없음.
         queryset = queryset.filter(~Q(user_id=exclude_user))
-        return choice(queryset, size=sample_size, replace=False)
+        return random.choice(queryset, size=sample_size, replace=False)
 
 
 class GameMatch(models.Model):
@@ -246,20 +247,16 @@ class GameMatch(models.Model):
         GameRoom,
         verbose_name=_("Game room"),
         on_delete=models.PROTECT,
-        related_name="game_matchs"
+        related_name="game_matchs",
     )
 
     history = models.JSONField(
         _("History in Game Match"),
-        blank = True,
-        default = dict,
+        blank=True,
+        default=dict,
     )
 
-    score = models.IntegerField(
-        _("Match Score"),
-        blank=True,
-        default=0
-    )
+    score = models.IntegerField(_("Match Score"), blank=True, default=0)
 
     status = models.CharField(
         _("Game Match Status"),
