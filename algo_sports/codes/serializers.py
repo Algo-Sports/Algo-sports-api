@@ -10,15 +10,7 @@ class UserCodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserCode
-        fields = [
-            "id",
-            "user",
-            "programming_language",
-            "code",
-            "is_active",
-            "created_at",
-            "updated_at",
-        ]
+        fields = "__all__"
 
 
 class JudgementCodeSerializer(serializers.ModelSerializer):
