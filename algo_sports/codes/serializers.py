@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from algo_sports.users.serializers import UsernameSerializer
 
-from .models import MatchCodeRelation, JudgementCode, UserCode
+from .models import JudgementCode, MatchCodeRelation, UserCode
 
 
 class UserCodeSerializer(serializers.ModelSerializer):
@@ -11,6 +11,7 @@ class UserCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCode
         fields = [
+            "id",
             "user",
             "programming_language",
             "code",
@@ -26,6 +27,7 @@ class JudgementCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = JudgementCode
         fields = [
+            "id",
             "user",
             "gameinfo_id",
             "programming_language",
@@ -39,6 +41,7 @@ class MatchCodeRelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = MatchCodeRelation
         fields = [
+            "id",
             "usercode",
             "gamematch",
             "created_at",
