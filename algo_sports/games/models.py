@@ -221,23 +221,32 @@ class GameRoom(models.Model):
     def active_participants(self):
         return self.participants.filter(is_active=True)
 
-    def sample_active_participants(self, exclude_user):
+    def sample_active_participants(self, exclude_user) -> list([int]):
         if not self.is_active:
             return []
 
+        # 자신을 제외한 유저코드 추출
         queryset = self.active_participants
+        queryset = queryset.filter(~Q(user_id=exclude_user)).values_list(
+            "id", flat=True
+        )
         actives = queryset.count()
 
         max_users = self.gameinfo.max_users
         min_users = self.gameinfo.min_users
 
-        sample_size = min_users
-        if actives >= max_users:
+        sample_size = 0
+        if actives > 0 and actives < max_users:
+            sample_size = min_users
+        elif actives >= max_users:
             sample_size = max_users
 
+        sampled = []
+        if sample_size > 0:
+            sampled = random.choice(queryset, size=sample_size, replace=False)
+
         # 균일 추출, 동일값 없음.
-        queryset = queryset.filter(~Q(user_id=exclude_user))
-        return random.choice(queryset, size=sample_size, replace=False)
+        return sampled
 
 
 class GameMatch(models.Model):
