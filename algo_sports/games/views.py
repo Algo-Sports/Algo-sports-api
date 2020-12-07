@@ -23,6 +23,7 @@ from .serializers import (
     GameRoomCreateSerializer,
     GameRoomSerializer,
 )
+from .tasks import run_match
 
 # from django.utils.translation import gettext_lazy as _
 
@@ -149,7 +150,7 @@ class GameMatchViewSet(
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        # # 경쟁 코드들
+        # 경쟁 코드들
         gameroom = get_object_or_404(GameRoom, pk=serializer.data.get("gameroom_id"))
         competitor_ids = gameroom.sample_active_participants(
             exclude_user=self.request.user
@@ -160,9 +161,18 @@ class GameMatchViewSet(
                 data={"msg": _("참가자들이 부족합니다.")}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # # 참가할 매치
+        # 참가할 매치
         gamematch = get_object_or_404(GameMatch, pk=serializer.data.get("id"))
         gamematch.usercodes.add(*competitor_ids)
+
+        # celery task 실행
+        run_match.delay(
+            {
+                "gameroom_id": gameroom.id,
+                "gamematch_id": gamematch.id,
+                "competitor_ids": competitor_ids.tolist(),
+            }
+        )
 
         headers = self.get_success_headers(serializer.data)
         return Response(
