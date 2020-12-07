@@ -227,8 +227,10 @@ class GameRoom(models.Model):
 
         # 자신을 제외한 유저코드 추출
         queryset = self.active_participants
-        queryset = queryset.filter(~Q(user_id=exclude_user)).values_list(
-            "id", flat=True
+        queryset = (
+            queryset.select_related("programming_language")
+            .filter(~Q(user_id=exclude_user), programming_language__is_active=True)
+            .values_list("id", flat=True)
         )
         actives = queryset.count()
 
