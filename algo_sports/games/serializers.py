@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import GameInfo, GameRoom, GameVersion, GameVersionType
+from .models import GameInfo, GameMatch, GameRoom, GameVersion, GameVersionType
 
 
 class GameVersionSerializer(serializers.ModelSerializer):
@@ -63,10 +63,15 @@ class GameRoomCreateSerializer(serializers.ModelSerializer):
 class GameRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameRoom
-        fields = [
-            "gameversion",
-            "type",
-            "extra_setting",
-            "created_at",
-            "updated_at",
-        ]
+        fields = "__all__"
+
+
+class GameMatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GameMatch
+        fields = "__all__"
+        extra_kwargs = {
+            "history": {"read_only": True},
+            "score": {"read_only": True},
+            "status": {"read_only": True},
+        }
