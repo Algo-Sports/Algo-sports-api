@@ -35,3 +35,7 @@ class CommentFactory(DjangoModelFactory):
 
     class Meta:
         model = Comment
+
+
+def make_recomments(size: int, comment: Comment):
+    return CommentFactory.create_batch(size, post_id=comment.post, parent_id=comment)

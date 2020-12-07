@@ -1,3 +1,5 @@
+import random
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -33,17 +35,27 @@ class TestCommentViewSet:
         user = UserFactory()
 
         client.force_authenticate(user=user)
-        comment = CommentFactory(user_id=user)
+        comments = CommentFactory.create_batch(3, user_id=user)
+        recomment_sizes = random.sample(range(5, 30), len(comments))
 
-        url = reverse("api:comment-add-recomment", kwargs={"pk": comment.pk})
-        response = client.post(url, data={"content": "Hello! This is Comment"})
+        for recomment_size, comment in zip(recomment_sizes, comments):
+            url = reverse("api:comment-add-recomment", kwargs={"pk": comment.pk})
 
-        assert response.status_code == status.HTTP_201_CREATED
+            # Comment 객체의 실제 recomment 수와 기대하는 recomment 수 비교
+            for _ in range(recomment_size):
+                response = client.post(url, data={"content": "Hello! This is Comment"})
+                assert response.status_code == status.HTTP_201_CREATED
 
-        recomment = response.json()
-        recomment_pk = recomment.get("id")
+            assert comment.get_childs().count() == recomment_size
 
-        url = reverse("api:comment-add-recomment", kwargs={"pk": recomment_pk})
+            # Comment detail로 요청을 보냈을 때 오는 recomment 수와 기대하는 recomment 수 비교
+            detail_url = reverse("api:comment-detail", kwargs={"pk": comment.pk})
+            response = client.get(detail_url)
+            assert len(response.data["recomments"]) == recomment_size
+
+        # ReRecomment 불가능하도록 막기
+        recomment = comments[0].get_childs()[0]
+        url = reverse("api:comment-add-recomment", kwargs={"pk": recomment.pk})
         response = client.post(url, data={"content": "RereComment is not allowed!"})
 
         assert response.status_code == status.HTTP_404_NOT_FOUND

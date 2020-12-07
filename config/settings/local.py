@@ -74,4 +74,5 @@ SHELL_PLUS_IMPORTS = [
     "from algo_sports.blogs.tests.factories import *",
     "from algo_sports.codes.tests.factories import *",
     "from algo_sports.games.tests.factories import *",
+    "from algo_sports.users.tests.factories import *",
 ]
