@@ -17,6 +17,10 @@ class ProgrammingLanguage(models.Model):
     def __str__(self) -> str:
         return f"{self.name}"
 
+    @classmethod
+    def active_languages(cls):
+        return cls.objects.filter(is_active=True)
+
 
 class UserCode(models.Model):
     """Code as User"""
