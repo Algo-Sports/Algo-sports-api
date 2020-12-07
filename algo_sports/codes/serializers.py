@@ -6,11 +6,12 @@ from .models import JudgementCode, MatchCodeRelation, UserCode
 
 
 class UserCodeSerializer(serializers.ModelSerializer):
-    user = UsernameSerializer(read_only=True)
+    user = UsernameSerializer(source="user_id", read_only=True)
 
     class Meta:
         model = UserCode
         exclude = ["user_id"]
+        read_only_fields = ["is_active"]
 
 
 class JudgementCodeSerializer(serializers.ModelSerializer):
