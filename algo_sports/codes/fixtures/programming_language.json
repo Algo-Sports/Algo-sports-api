@@ -83,9 +83,9 @@
     "pk": 9,
     "fields": {
       "name": "C++ (Clang 7.0.1)",
-      "compile_cmd": "/usr/bin/clang++-7 %s main.cpp",
-      "run_cmd": "./a.out",
-      "is_active": false
+      "compile_cmd": "/usr/bin/clang++-7",
+      "run_cmd": "./",
+      "is_active": true
     }
   },
   {
@@ -113,9 +113,9 @@
     "pk": 12,
     "fields": {
       "name": "C++ (GCC 9.2.0)",
-      "compile_cmd": "/usr/local/gcc-9.2.0/bin/g++ %s main.cpp",
-      "run_cmd": "LD_LIBRARY_PATH=/usr/local/gcc-9.2.0/lib64 ./a.out",
-      "is_active": false
+      "compile_cmd": "/usr/local/gcc-9.2.0/bin/g++",
+      "run_cmd": "LD_LIBRARY_PATH=/usr/local/gcc-9.2.0/lib64 ./",
+      "is_active": true
     }
   },
   {
@@ -247,8 +247,8 @@
     "pk": 26,
     "fields": {
       "name": "JavaScript (Node.js 12.14.0)",
-      "run_cmd": "/usr/local/node-12.14.0/bin/node script.js",
-      "is_active": false
+      "run_cmd": "/usr/local/node-12.14.0/bin/node",
+      "is_active": true
     }
   },
   {
