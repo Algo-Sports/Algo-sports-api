@@ -31,10 +31,14 @@ class TestCommentViewSet:
 
     def test_add_recomment(self):
         client = APIClient()
+        client2 = APIClient()
 
         user = UserFactory()
+        user2 = UserFactory()
 
         client.force_authenticate(user=user)
+        client2.force_authenticate(user=user2)
+
         comments = CommentFactory.create_batch(3, user_id=user)
         recomment_sizes = random.sample(range(5, 30), len(comments))
 
@@ -45,13 +49,15 @@ class TestCommentViewSet:
             for _ in range(recomment_size):
                 response = client.post(url, data={"content": "Hello! This is Comment"})
                 assert response.status_code == status.HTTP_201_CREATED
+                response = client2.post(url, data={"content": "Hello! This is Comment"})
+                assert response.status_code == status.HTTP_201_CREATED
 
-            assert comment.get_childs().count() == recomment_size
+            assert comment.get_childs().count() == recomment_size * 2
 
             # Comment detail로 요청을 보냈을 때 오는 recomment 수와 기대하는 recomment 수 비교
             detail_url = reverse("api:comment-detail", kwargs={"pk": comment.pk})
             response = client.get(detail_url)
-            assert len(response.data["recomments"]) == recomment_size
+            assert len(response.data["recomments"]) == recomment_size * 2
 
         # ReRecomment 불가능하도록 막기
         recomment = comments[0].get_childs()[0]
