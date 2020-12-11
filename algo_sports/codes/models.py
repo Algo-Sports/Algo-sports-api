@@ -7,12 +7,18 @@ from algo_sports.games.models import GameMatch, GameRoom, GameVersion
 User = get_user_model()
 
 
+def make_template_code(main="", solution=""):
+    return {"main": main, "solution": solution}
+
+
 class ProgrammingLanguage(models.Model):
     name = models.SlugField(_("Programming language"), max_length=50, unique=True)
     is_active = models.BooleanField(default=False)
 
     compile_cmd = models.CharField(null=True, blank=True, max_length=500)
     run_cmd = models.CharField(null=True, blank=True, max_length=500)
+
+    template_code = models.JSONField(default=make_template_code)
 
     def __str__(self) -> str:
         return f"{self.name}"
