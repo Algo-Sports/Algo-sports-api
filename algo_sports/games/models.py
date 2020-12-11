@@ -234,8 +234,9 @@ class GameRoom(models.Model):
         )
         actives = queryset.count()
 
-        max_users = self.gameinfo.max_users
-        min_users = self.gameinfo.min_users
+        # 매치를 시작할 유저를 제외한 수
+        max_users = self.gameinfo.max_users - 1
+        min_users = self.gameinfo.min_users - 1
 
         sample_size = 0
         if actives > 0 and actives < max_users:
@@ -248,7 +249,7 @@ class GameRoom(models.Model):
             sampled = random.choice(queryset, size=sample_size, replace=False)
 
         # 균일 추출, 동일값 없음.
-        return sampled
+        return sampled.tolist()
 
 
 class GameMatch(models.Model):
