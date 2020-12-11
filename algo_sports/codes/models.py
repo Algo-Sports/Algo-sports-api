@@ -12,7 +12,7 @@ def make_template_code(main="", solution=""):
 
 
 class ProgrammingLanguage(models.Model):
-    name = models.SlugField(_("Programming language"), max_length=50, unique=True)
+    name = models.CharField(_("Programming language"), max_length=50, unique=True)
     is_active = models.BooleanField(default=False)
 
     compile_cmd = models.CharField(null=True, blank=True, max_length=500)
