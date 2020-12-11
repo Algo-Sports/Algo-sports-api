@@ -43,13 +43,13 @@ class IsAdminOrReadOnly(BasePermission):
         return bool(request.user and request.user.is_admin)
 
 
-class IsOwnerOrReadOnly(BasePermission):
+class IsOwnerOrReadAndPostOnly(BasePermission):
     """
-    해당 객체를 생성한 user만 권한을 부여
+    해당 객체를 생성한 user만 수정 권한을 부여
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
+        if request.method in SAFE_METHODS or request.method in "POST":
             return True
 
         return obj.user == request.user

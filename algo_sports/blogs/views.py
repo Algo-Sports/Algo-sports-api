@@ -14,7 +14,7 @@ from rest_framework.viewsets import GenericViewSet
 from algo_sports.blogs.filters import BlogFilter, CommentFilter, PostFilter
 from algo_sports.blogs.permissions import IsCommentNotDeleted
 from algo_sports.utils.paginations import SizeQueryPagination
-from algo_sports.utils.permissions import IsOwnerOrReadOnly, IsSuperUser
+from algo_sports.utils.permissions import IsOwnerOrReadAndPostOnly, IsSuperUser
 
 from .models import Blog, Comment, Post
 from .serializers import (
@@ -87,7 +87,10 @@ class PostViewSet(
 
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly, IsSuperUser | IsOwnerOrReadOnly]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsSuperUser | IsOwnerOrReadAndPostOnly,
+    ]
     lookup_field = "pk"
     pagination_class = SizeQueryPagination
     filterset_class = PostFilter
@@ -128,7 +131,7 @@ class CommentViewSet(
     queryset = Comment.objects.all()
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsSuperUser | IsOwnerOrReadOnly,
+        IsSuperUser | IsOwnerOrReadAndPostOnly,
         IsCommentNotDeleted,
     ]
     lookup_field = "pk"

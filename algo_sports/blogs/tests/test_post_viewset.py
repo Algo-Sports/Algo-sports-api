@@ -22,5 +22,9 @@ class TestPostViewSet:
 
         url = reverse("api:post-add-comment", kwargs={"pk": post.pk})
         response = client.post(url, data={"content": "Hello! This is Comment"})
+        assert response.status_code == status.HTTP_201_CREATED
 
+        user2 = UserFactory()
+        client.force_authenticate(user=user2)
+        response = client.post(url, data={"content": "Hello! This is Comment"})
         assert response.status_code == status.HTTP_201_CREATED

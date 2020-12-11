@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from algo_sports.codes.filters import JudgementCodeFilter, UserCodeFilter
-from algo_sports.utils.permissions import IsAdminUser, IsOwnerOrReadOnly, IsSuperUser
+from algo_sports.utils.permissions import (
+    IsAdminUser,
+    IsOwnerOrReadAndPostOnly,
+    IsSuperUser,
+)
 
 from .models import JudgementCode, UserCode
 from .serializers import JudgementCodeSerializer, UserCodeSerializer
@@ -23,7 +27,10 @@ class UserCodeViewSet(ModelViewSet):
     serializer_class = UserCodeSerializer
     queryset = UserCode.objects.all()
     lookup_field = "pk"
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly | IsSuperUser]
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadAndPostOnly | IsSuperUser,
+    ]
     filterset_class = UserCodeFilter
 
     action_serializer_classes = {}
