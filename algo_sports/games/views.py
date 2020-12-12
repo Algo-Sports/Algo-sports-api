@@ -168,6 +168,18 @@ class GameRoomViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
+def make_run_match_parameter(
+    gameroom_id: int,
+    gamematch_id: int,
+    competitor_ids: list([int]),
+):
+    return {
+        "gameroom_id": gameroom_id,
+        "gamematch_id": gamematch_id,
+        "competitor_ids": competitor_ids,
+    }
+
+
 class GameMatchViewSet(
     ListModelMixin, RetrieveModelMixin, CreateModelMixin, GenericViewSet
 ):
@@ -184,20 +196,50 @@ class GameMatchViewSet(
 
     def create(self, request, *args, **kwargs):
         """ Create match """
+        # match에 직접적으로 저장되지 않는 데이터 추출
+        mycode_id = request.data.get("mycode_id")
+        if mycode_id:
+            request.data.pop("mycode_id")
+
+        # 저장은 안하고 유효한 입력인지 확인 진행
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
 
-        # 경쟁 코드들
-        gameroom = get_object_or_404(GameRoom, pk=serializer.data.get("gameroom_id"))
+        # gameroom object
+        gameroom = serializer.validated_data.get("gameroom_id")
+
+        # mycode object
+        mycode_obj = gameroom.participants.filter(pk=mycode_id)
+        if not mycode_obj.exists():
+            # 방에 참가한 코드인지 확인
+            return Response(
+                data={"msg": _("현재 방에 참가하지 않은 코드입니다.")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif not mycode_obj[0].user.id == request.user.id:
+            # 현재 로그인한 유저의 코드인지 확인
+            return Response(
+                data={"msg": _("소유하지 않은 코드입니다.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # 경쟁 코드들 샘플링
         competitor_ids = gameroom.sample_active_participants(
             exclude_user=self.request.user
         )
 
+        # 참가자가 충분한지 확인
         if len(competitor_ids) == 0:
             return Response(
-                data={"msg": _("참가자들이 부족합니다.")}, status=status.HTTP_400_BAD_REQUEST
+                data={"msg": _("참가자들이 부족합니다.")},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # 매치를 만드는 사용자의 코드를 0번 인덱스에 추가
+        competitor_ids.insert(0, mycode_id)
+
+        # 유효한 입력이므로 Match 생성
+        serializer.save()
 
         # 참가할 매치
         gamematch = get_object_or_404(GameMatch, pk=serializer.data.get("id"))
@@ -205,14 +247,15 @@ class GameMatchViewSet(
 
         # celery task 실행
         run_match.delay(
-            {
-                "gameroom_id": gameroom.id,
-                "gamematch_id": gamematch.id,
-                "competitor_ids": competitor_ids.tolist(),
-            }
+            make_run_match_parameter(
+                gameroom.id,
+                gamematch.id,
+                competitor_ids,
+            )
         )
-
         headers = self.get_success_headers(serializer.data)
         return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers,
         )
