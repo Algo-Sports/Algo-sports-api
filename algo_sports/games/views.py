@@ -14,7 +14,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from algo_sports.utils.permissions import IsAdminOrReadOnly
 
-from .models import GameInfo, GameMatch, GameRoom, GameVersionType
+from .models import GameInfo, GameMatch, GameRoom, GameVersion, GameVersionType
 from .serializers import (
     GameInfoDetailSerializer,
     GameInfoSerializer,
@@ -55,22 +55,60 @@ class GameInfoViewSet(
             return serializer
         return super().get_serializer_class()
 
+    def create(self, request, *args, **kwargs):
+        """
+        GameInfo 생성할 때 Version을 하나 생성한다.
+        """
+        version_args = {}
+
+        default_setting = request.data.get("default_setting")
+        if default_setting:
+            request.data.pop("default_setting")
+            version_args["default_setting"] = default_setting
+
+        response = super().create(request, *args, **kwargs)
+        gameinfo = GameInfo.objects.get(id=response.data.get("id"))
+        version_args["gameinfo_id"] = gameinfo
+
+        GameVersion.objects.create(**version_args)
+
+        serializer = self.get_serializer(instance=gameinfo)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
     def update(self, request, *args, **kwargs):
         """
         GameInfo의 Version을 한 단계 올린다.
         """
         gameinfo = self.get_object()
-        update_type = request.data.get("update_type", GameVersionType.micro)
-        change_log = request.data.get("change_log")
 
-        request.data.pop("update_type")
-        request.data.pop("change_log")
+        update_type = request.data.get("update_type")
+        if update_type:
+            request.data.pop("update_type")
+            update_type = GameVersionType.micro
+
+        default_setting = request.data.get("default_setting")
+        if default_setting:
+            request.data.pop("default_setting")
+
+        change_log = request.data.get("change_log")
+        if change_log:
+            request.data.pop("change_log")
 
         if change_log:
-            gameinfo.update_version(
-                update_type=update_type,
-                change_log=change_log,
-            )
+            if default_setting:
+                gameinfo.update_version(
+                    update_type=update_type,
+                    change_log=change_log,
+                    default_setting=default_setting,
+                )
+            else:
+                gameinfo.update_version(
+                    update_type=update_type,
+                    change_log=change_log,
+                )
             return super().update(request, *args, **kwargs)
 
         return Response(
@@ -85,17 +123,17 @@ class GameInfoViewSet(
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"])
-    def create_gameroom(self, request):
+    def create_gameroom(self, request, *args, **kwargs):
         gameinfo = self.get_object()
 
         version = request.data.get("version")
-        request.data.pop("version")
 
         gameversion_id = None
         if version:
-            gameversion_id = gameinfo.latest_version
-        else:
             gameversion_id = gameinfo.get_version(version=version)
+            request.data.pop("version")
+        else:
+            gameversion_id = gameinfo.latest_version
 
         serializers = self.get_serializer(data=request.data)
         serializers.is_valid()
@@ -121,8 +159,8 @@ class GameRoomViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     def total_participants(self, request):
         """ The number of joined users """
         gameroom = self.get_object()
-        num_participants = gameroom.participants
-        num_active_participants = gameroom.active_participants
+        num_participants = gameroom.participants.count()
+        num_active_participants = gameroom.active_participants.count()
         data = {
             "num_participants": num_participants,
             "num_active_participants": num_active_participants,

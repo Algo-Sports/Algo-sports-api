@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from algo_sports.codes.models import UserCode
+
 from .models import GameInfo, GameMatch, GameRoom, GameVersion, GameVersionType
 
 
@@ -11,18 +13,22 @@ class GameVersionSerializer(serializers.ModelSerializer):
 
 class GameInfoSerializer(serializers.ModelSerializer):
     latest_version = serializers.SerializerMethodField(method_name="_version")
+    default_setting = serializers.JSONField(required=False)
 
     class Meta:
         model = GameInfo
         fields = "__all__"
 
     def _version(self, instance):
-        version = instance.latest_version.version_str
-        return version
+        version = None
+        if instance.latest_version:
+            version = instance.latest_version.version_str
+        return version or "None"
 
 
 class GameInfoDetailSerializer(serializers.ModelSerializer):
     change_log = serializers.JSONField()
+    default_setting = serializers.JSONField(write_only=True)
     version = serializers.SerializerMethodField(method_name="_version")
 
     class Meta:
@@ -61,12 +67,21 @@ class GameRoomCreateSerializer(serializers.ModelSerializer):
 
 
 class GameRoomSerializer(serializers.ModelSerializer):
+    total_active_participants = serializers.IntegerField(read_only=True)
+    template_code = serializers.CharField(read_only=True)
+    gameversion = GameVersionSerializer()
+    gameinfo = GameInfoSerializer()
+
     class Meta:
         model = GameRoom
         fields = "__all__"
 
 
 class GameMatchSerializer(serializers.ModelSerializer):
+    mycode_id = serializers.PrimaryKeyRelatedField(
+        queryset=UserCode.objects.all(), required=False
+    )
+
     class Meta:
         model = GameMatch
         fields = "__all__"
