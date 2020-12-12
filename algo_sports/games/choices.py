@@ -14,3 +14,9 @@ class GameStatus(models.TextChoices):
     FINISHED = "FN", _("Finished")
     ERROR_OCCURED = "EO", _("Error occured")
     __empty__ = _("(Unknown)")
+
+
+class GameVersionType(models.TextChoices):
+    major = "major"
+    minor = "minor"
+    micro = "micro"

@@ -1,22 +1,16 @@
 from typing import Union
 
+import numpy
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
-from django.db.models.enums import TextChoices
+from django.http import Http404
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from numpy import random
 
-from .choices import GameStatus, GameType
+from .choices import GameStatus, GameType, GameVersionType
 
 User = get_user_model()
-
-
-class GameVersionType(TextChoices):
-    major = "major"
-    minor = "minor"
-    micro = "micro"
 
 
 def make_version(major=0, minor=0, micro=1):
@@ -48,7 +42,10 @@ class GameInfo(models.Model):
         return f"{self.title} ({self.total_versions})"
 
     def get_version(self, version: dict):
-        return self.get_versions().filter(version=version)
+        filtered = self.get_versions().filter(version=version)
+        if not filtered.exists():
+            return Http404()
+        return filtered[0]
 
     def get_versions(self, ordering=False):
         versions = self.versions.all()
@@ -80,6 +77,7 @@ class GameInfo(models.Model):
         self,
         update_type: GameVersionType,
         change_log: Union[str, list],
+        default_setting: dict = None,
         target_version: dict = None,
     ):
         if not self.is_active:
@@ -100,7 +98,25 @@ class GameInfo(models.Model):
             version = version.micro_up()
         else:
             raise "Unexpected update type"
+
+        if default_setting:
+            version.default_setting = default_setting
+            version.save()
         return version.update_change_log(change_log)
+
+
+def get_default_setting():
+    return {
+        "includes": {
+            "Python (3.8.1)": [],
+        },
+        "arguments": {
+            "Python (3.8.1)": ["argv[0]"],
+        },
+        "parameters": {
+            "Python (3.8.1)": ["greeting: str"],
+        },
+    }
 
 
 class GameVersion(models.Model):
@@ -113,7 +129,9 @@ class GameVersion(models.Model):
 
     version = models.JSONField(_("Game Version"), default=make_version)
     change_log = models.JSONField(_("Version change log"), default=dict)
-    default_setting = models.JSONField(_("Version default setting"), default=dict)
+    default_setting = models.JSONField(
+        _("Version default setting"), default=get_default_setting
+    )
     is_active = models.BooleanField(_("Is this version active?"), default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -219,19 +237,18 @@ class GameRoom(models.Model):
 
     @property
     def active_participants(self):
-        return self.participants.filter(is_active=True)
+        return self.participants.select_related("programming_language").filter(
+            programming_language__is_active=True, is_active=True
+        )
 
     def sample_active_participants(self, exclude_user) -> list([int]):
         if not self.is_active:
             return []
 
         # 자신을 제외한 유저코드 추출
-        queryset = self.active_participants
-        queryset = (
-            queryset.select_related("programming_language")
-            .filter(~Q(user_id=exclude_user), programming_language__is_active=True)
-            .values_list("id", flat=True)
-        )
+        queryset = self.active_participants.filter(
+            ~Q(user_id=exclude_user)
+        ).values_list("id", flat=True)
         actives = queryset.count()
 
         # 매치를 시작할 유저를 제외한 수
@@ -244,9 +261,9 @@ class GameRoom(models.Model):
         elif actives >= max_users:
             sample_size = max_users
 
-        sampled = []
+        sampled = numpy.array([])
         if sample_size > 0:
-            sampled = random.choice(queryset, size=sample_size, replace=False)
+            sampled = numpy.random.choice(queryset, size=sample_size, replace=False)
 
         # 균일 추출, 동일값 없음.
         return sampled.tolist()
