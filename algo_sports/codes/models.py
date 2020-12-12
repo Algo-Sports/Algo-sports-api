@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.template.base import Template
+from django.template.context import Context
 from django.utils.translation import gettext_lazy as _
 
 from algo_sports.games.models import GameMatch, GameRoom, GameVersion
@@ -26,6 +28,29 @@ class ProgrammingLanguage(models.Model):
     @classmethod
     def active_languages(cls):
         return cls.objects.filter(is_active=True)
+
+    def get_solution_template(self, parameters: list([str])):
+        parameters = ", ".join(parameters)
+
+        raw_template = self.template_code.get("solution")
+        template = Template(raw_template)
+        context = Context({"parameters": parameters})
+        template_code = template.render(context)
+        return template_code
+
+    def get_main_template(
+        self, include: list([str]), arguments: list([str]), solution: str
+    ):
+        includes = "\n".join(include)
+        arguments = ", ".join(arguments)
+
+        raw_template = self.template_code.get("main")
+        template = Template(raw_template)
+        context = Context(
+            {"includes": includes, "arguments": arguments, "solution": solution}
+        )
+        template_code = template.render(context)
+        return template_code
 
 
 class UserCode(models.Model):

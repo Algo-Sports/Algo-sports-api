@@ -2,7 +2,22 @@ from rest_framework import serializers
 
 from algo_sports.users.serializers import UsernameSerializer
 
-from .models import JudgementCode, MatchCodeRelation, UserCode
+from .models import JudgementCode, MatchCodeRelation, ProgrammingLanguage, UserCode
+
+
+class ProgrammingLanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgrammingLanguage
+        exclude = ["compile_cmd", "run_cmd", "template_code"]
+
+
+class ProgrammingLanugaeTemplateSerializer(serializers.Serializer):
+    parameters = serializers.ListField(
+        child=serializers.CharField(required=False),
+        write_only=True,
+        required=False,
+    )
+    template_code = serializers.CharField(read_only=True)
 
 
 class UserCodeSerializer(serializers.ModelSerializer):
