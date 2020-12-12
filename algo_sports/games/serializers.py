@@ -67,7 +67,12 @@ class GameRoomCreateSerializer(serializers.ModelSerializer):
 
 
 class GameRoomSerializer(serializers.ModelSerializer):
-    total_active_participants = serializers.IntegerField(read_only=True)
+    total_active_participants = serializers.SerializerMethodField(
+        method_name="_total_active_participants"
+    )
+    total_participants = serializers.SerializerMethodField(
+        method_name="_total_participants"
+    )
     template_code = serializers.CharField(read_only=True)
     gameversion = GameVersionSerializer()
     gameinfo = GameInfoSerializer()
@@ -75,6 +80,12 @@ class GameRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameRoom
         fields = "__all__"
+
+    def _total_active_participants(self, instance):
+        return instance.active_participants.count()
+
+    def _total_participants(self, instance):
+        return instance.participants.count()
 
 
 class GameMatchSerializer(serializers.ModelSerializer):

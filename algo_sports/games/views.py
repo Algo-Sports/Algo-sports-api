@@ -155,18 +155,6 @@ class GameRoomViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             return serializer
         return super().get_serializer_class()
 
-    @action(detail=True, methods=["GET"])
-    def total_participants(self, request):
-        """ The number of joined users """
-        gameroom = self.get_object()
-        num_participants = gameroom.participants.count()
-        num_active_participants = gameroom.active_participants.count()
-        data = {
-            "num_participants": num_participants,
-            "num_active_participants": num_active_participants,
-        }
-        return Response(data=data, status=status.HTTP_200_OK)
-
 
 def make_run_match_parameter(
     gameroom_id: int,
