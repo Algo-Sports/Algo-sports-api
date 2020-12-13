@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 volumes:
   local_postgres_data: {}
@@ -33,3 +33,39 @@ services:
       - local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
+
+  redis:
+    image: redis:5.0
+    container_name: redis
+    ports: ["6379"]
+
+
+  celeryworker:
+    <<: *django
+    image: my_awesome_project_local_celeryworker
+    container_name: celeryworker
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: my_awesome_project_local_celerybeat
+    container_name: celerybeat
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: my_awesome_project_local_flower
+    container_name: flower
+    ports:
+      - "5555:5555"
+    command: /start-flower
