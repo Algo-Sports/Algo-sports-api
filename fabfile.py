@@ -52,6 +52,16 @@ def runserver():
     local("python manage.py runserver")
 
 
+def load_languages():
+    local(
+        "python manage.py loaddata algo_sports/codes/fixtures/programming_language.json"
+    )
+
+
+def shell():
+    local("python manage.py shell_plus")
+
+
 # Celery worker
 # ----------------------------------------------------------------
 def celery():
