@@ -23,6 +23,6 @@ class JudgementCodeFilter(filters.FilterSet):
         model = JudgementCode
         fields = (
             "user",
-            "gameinfo_id",
+            "gameversion_id",
             "programming_language",
         )

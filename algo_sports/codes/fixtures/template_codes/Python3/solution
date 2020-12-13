@@ -1,0 +1,4 @@
+{% autoescape off %}
+def solution({{ parameters }}):
+    print("Hello")
+{% endautoescape %}

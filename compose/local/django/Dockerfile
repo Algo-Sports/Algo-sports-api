@@ -1,3 +1,5 @@
+FROM judge0/compilers AS base
+
 FROM python:3.8-slim-buster
 
 ENV PYTHONUNBUFFERED 1

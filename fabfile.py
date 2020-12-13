@@ -48,6 +48,26 @@ def makemessages(locale):
     local(f"./manage.py makemessages -i venv -l {locale}")
 
 
+def runserver():
+    local("python manage.py runserver")
+
+
+def load_languages():
+    local(
+        "python manage.py loaddata algo_sports/codes/fixtures/programming_language.json"
+    )
+
+
+def shell():
+    local("python manage.py shell_plus")
+
+
+# Celery worker
+# ----------------------------------------------------------------
+def celery():
+    local("celery -A config.celery_app worker -l info")
+
+
 # Docker 커맨드
 # ----------------------------------------------------------------
 def build():

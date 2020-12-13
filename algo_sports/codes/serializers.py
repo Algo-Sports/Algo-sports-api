@@ -2,22 +2,31 @@ from rest_framework import serializers
 
 from algo_sports.users.serializers import UsernameSerializer
 
-from .models import CodeRoomRelation, JudgementCode, UserCode
+from .models import JudgementCode, MatchCodeRelation, ProgrammingLanguage, UserCode
+
+
+class ProgrammingLanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgrammingLanguage
+        exclude = ["compile_cmd", "run_cmd", "template_code"]
+
+
+class ProgrammingLanugaeTemplateSerializer(serializers.Serializer):
+    parameters = serializers.ListField(
+        child=serializers.CharField(required=False),
+        write_only=True,
+        required=False,
+    )
+    template_code = serializers.CharField(read_only=True)
 
 
 class UserCodeSerializer(serializers.ModelSerializer):
-    user = UsernameSerializer(read_only=True)
+    user = UsernameSerializer(source="user_id", read_only=True)
 
     class Meta:
         model = UserCode
-        fields = [
-            "user",
-            "programming_language",
-            "code",
-            "is_active",
-            "created_at",
-            "updated_at",
-        ]
+        exclude = ["user_id"]
+        read_only_fields = ["is_active"]
 
 
 class JudgementCodeSerializer(serializers.ModelSerializer):
@@ -25,24 +34,16 @@ class JudgementCodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JudgementCode
-        fields = [
-            "user",
-            "gameinfo_id",
-            "programming_language",
-            "code",
-            "created_at",
-            "updated_at",
-        ]
+        exclude = ["user_id"]
 
 
-class CodeRoomRelationSerializer(serializers.ModelSerializer):
+class MatchCodeRelationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodeRoomRelation
+        model = MatchCodeRelation
         fields = [
+            "id",
             "usercode",
-            "gameroom",
-            "score",
-            "history",
+            "gamematch",
             "created_at",
             "updated_at",
         ]
