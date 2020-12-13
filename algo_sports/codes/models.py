@@ -56,11 +56,13 @@ class ProgrammingLanguage(models.Model):
 class UserCode(models.Model):
     """Code as User"""
 
-    user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
-    gameroom = models.ForeignKey(
+    user_id = models.ForeignKey(
+        User, related_name="usercodes", blank=True, null=True, on_delete=models.SET_NULL
+    )
+    gamerooms = models.ForeignKey(
         GameRoom, related_name="usercodes", on_delete=models.PROTECT
     )
-    gamematchs = models.ManyToManyField(
+    gamematches = models.ManyToManyField(
         GameMatch, related_name="usercodes", through="MatchCodeRelation"
     )
 
@@ -84,12 +86,18 @@ class UserCode(models.Model):
 class JudgementCode(models.Model):
     """Code as Judger"""
 
-    user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    user_id = models.ForeignKey(
+        User,
+        related_name="judgementcodes",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     gameversion_id = models.ForeignKey(
         GameVersion,
         verbose_name=_("Game version"),
         on_delete=models.PROTECT,
-        related_name="judgement_codes",
+        related_name="judgementcodes",
     )
 
     programming_language = models.ForeignKey(
