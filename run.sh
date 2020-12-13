@@ -26,8 +26,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ $COMPILE_CMD != "" ]]; then
-    bash -c "$COMPILE_CMD"
-    bash -c "$RUN_CMD"
+    bash -c "$COMPILE_CMD $SOURCE_FILE"
+    bash -c "$RUN_CMD $SOURCE_FILE"
 else
     echo "" | bash -c "$RUN_CMD $SOURCE_FILE"
 fi
