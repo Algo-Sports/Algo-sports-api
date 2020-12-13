@@ -176,6 +176,12 @@ class GameMatchViewSet(
 
     action_serializer_classes = {}
 
+    def get_queryset(self):
+        gamematche_ids = self.request.user.usercodes.values_list(
+            "gamematches", flat=True
+        )
+        return GameMatch.objects.filter(id__in=gamematche_ids)
+
     def get_serializer_class(self):
         serializer = self.action_serializer_classes.get(self.action)
         if serializer:
