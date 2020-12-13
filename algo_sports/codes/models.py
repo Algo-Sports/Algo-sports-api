@@ -21,6 +21,7 @@ class ProgrammingLanguage(models.Model):
     run_cmd = models.CharField(null=True, blank=True, max_length=500)
 
     template_code = models.JSONField(default=make_template_code)
+    extension = models.CharField(_("Language extension"), max_length=10)
 
     def __str__(self) -> str:
         return f"{self.name}"

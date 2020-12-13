@@ -7,6 +7,7 @@ from .models import JudgementCode, MatchCodeRelation, ProgrammingLanguage, UserC
 class ProgrammingLanguageAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
     search_fields = ("name",)
+    list_filter = ("is_active",)
 
 
 @admin.register(UserCode)
