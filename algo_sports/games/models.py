@@ -109,15 +109,21 @@ def get_default_setting():
     return {
         "includes": {
             "Python (3.8.1)": [],
-            "C++ (GCC 9.2.0)": [],
+            "C++ (GCC 9.2.0)": ["#include <string>"],
+            "C (GCC 9.2.0)": [],
+            "JavaScript (Node.js 12.14.0)": [],
         },
         "arguments": {
             "Python (3.8.1)": ["argv[0]"],
-            "C++ (GCC 9.2.0)": [],
+            "C++ (GCC 9.2.0)": ["argv[0]"],
+            "C (GCC 9.2.0)": ["argv[0]"],
+            "JavaScript (Node.js 12.14.0)": ["argv[0]"],
         },
         "parameters": {
             "Python (3.8.1)": ["greeting: str"],
-            "C++ (GCC 9.2.0)": [],
+            "C++ (GCC 9.2.0)": ["std::string greeting"],
+            "C (GCC 9.2.0)": ["const char* greeting"],
+            "JavaScript (Node.js 12.14.0)": ["greeting"],
         },
     }
 
