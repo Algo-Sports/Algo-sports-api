@@ -39,7 +39,7 @@ def run_match(match_data):
         # 코드 파일 생성
         parent = Path(f"match_datas/room_{room.id}/match_{match.id}/")
         parent.mkdir(parents=True, exist_ok=True)
-        file_name = f"code_{competitor.id}"
+        file_name = f"code_{competitor.id}.{language.extension}"
         file_path = parent / file_name
         with file_path.open("w", encoding="utf-8") as f:
             gen_code = ["echo", f"{code_string}"]
@@ -51,6 +51,9 @@ def run_match(match_data):
             run_code.extend(["-c", f"{compile_cmd}"])
 
         # output
-        output = subprocess.run(run_code, check=True, capture_output=True)
-        print(output)
+        try:
+            output = subprocess.run(run_code, check=True, capture_output=True)
+            print(output)
+        except UnboundLocalError:
+            print(f"Error! competitor id : {competitor.id}")
     match.set_status(GameStatus.FINISHED)
