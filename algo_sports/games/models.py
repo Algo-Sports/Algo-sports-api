@@ -109,12 +109,15 @@ def get_default_setting():
     return {
         "includes": {
             "Python (3.8.1)": [],
+            "C++ (GCC 9.2.0)": [],
         },
         "arguments": {
             "Python (3.8.1)": ["argv[0]"],
+            "C++ (GCC 9.2.0)": [],
         },
         "parameters": {
             "Python (3.8.1)": ["greeting: str"],
+            "C++ (GCC 9.2.0)": [],
         },
     }
 
@@ -151,6 +154,13 @@ class GameVersion(models.Model):
     @cached_property
     def gameinfo(self):
         return self.gameinfo_id
+
+    @property
+    def support_languages(self) -> set([str]):
+        languages = set()
+        for language_setting in self.default_setting.values():
+            languages |= language_setting.keys()
+        return languages
 
     @property
     def version_str(self):

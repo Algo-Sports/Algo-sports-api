@@ -6,6 +6,10 @@ from .models import GameInfo, GameMatch, GameRoom, GameVersion, GameVersionType
 
 
 class GameVersionSerializer(serializers.ModelSerializer):
+    support_languages = serializers.ListField(
+        child=serializers.CharField(), read_only=True
+    )
+
     class Meta:
         model = GameVersion
         exclude = ["change_log"]
