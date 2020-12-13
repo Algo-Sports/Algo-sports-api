@@ -8,18 +8,20 @@ from algo_sports.codes.models import UserCode
 from algo_sports.games.models import GameMatch, GameRoom
 from config import celery_app
 
+from .choices import GameStatus
+
 User = get_user_model()
 
 
 @celery_app.task()
 def run_match(match_data):
-    room = get_object_or_404(GameRoom, pk=match_data.get("gameroom_id"))
+    # 게임 진행중으로 변경
     match = get_object_or_404(GameMatch, pk=match_data.get("gamematch_id"))
-    competitors = UserCode.objects.filter(id__in=match_data.get("competitor_ids"))
-    # print(room, match, competitors)
+    match.set_status(GameStatus.IN_PROGRESS)
 
+    room = get_object_or_404(GameRoom, pk=match_data.get("gameroom_id"))
+    competitors = UserCode.objects.filter(id__in=match_data.get("competitor_ids"))
     default_setting = room.gameversion.default_setting
-    print(default_setting)
 
     for competitor in competitors:
         language = competitor.programming_language
@@ -51,3 +53,4 @@ def run_match(match_data):
         # output
         output = subprocess.run(run_code, check=True, capture_output=True)
         print(output)
+    match.set_status(GameStatus.FINISHED)

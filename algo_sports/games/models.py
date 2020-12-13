@@ -299,3 +299,7 @@ class GameMatch(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id}. ({self.status})"
+
+    def set_status(self, status: GameStatus):
+        self.status = status
+        self.save()
