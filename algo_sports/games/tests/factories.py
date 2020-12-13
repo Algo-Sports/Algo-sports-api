@@ -37,7 +37,7 @@ class GameVersionFactory(DjangoModelFactory):
 
 class GameRoomFactory(DjangoModelFactory):
     gameversion_id = SubFactory(GameVersionFactory)
-    type = FuzzyChoice(GameType.values)
+    type = FuzzyChoice(GameType.choices)
     extra_setting = {
         "game_setting1": {
             "varient": 300,
