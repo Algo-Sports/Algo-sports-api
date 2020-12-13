@@ -1,7 +1,0 @@
-{% autoescape off %}
-#include <iostream>
-
-void solution({{ parameters }}) {
-    printf("Hello world");
-}
-{% endautoescape %}

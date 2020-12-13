@@ -30,28 +30,11 @@
    pip install -r requirements/local.txt
    ```
 
-### Utility
-
-- 아래 커맨드로 확인 가능
-
-```shell
-fab -l
-```
-
 ### Start local server
 
-- API 서버
-  ```shell
-  fab runserver
-  ```
-- Celery broker
-  ```shell
-  redis-server
-  ```
-- Celery worker
-  ```shell
-  fab celery
-  ```
+```shell
+python manage.py runserver
+```
 
 ### Test
 

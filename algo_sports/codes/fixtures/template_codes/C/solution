@@ -1,8 +1,0 @@
-{% autoescape off %}
-#include <stdio.h>
-#include <string.h>
-
-void solution({{ parameters }}) {
-    printf("Hello world");
-}
-{% endautoescape %}
