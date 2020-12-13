@@ -3,7 +3,7 @@ from factory.declarations import SubFactory
 from factory.django import DjangoModelFactory
 
 from algo_sports.codes.models import JudgementCode, ProgrammingLanguage, UserCode
-from algo_sports.games.tests.factories import GameInfoFactory
+from algo_sports.games.tests.factories import GameRoomFactory, GameVersionFactory
 from algo_sports.users.tests.factories import UserFactory
 
 fake_word = Faker("word")
@@ -18,6 +18,7 @@ class ProgrammingLanguageFactory(DjangoModelFactory):
 
 class UserCodeFactory(DjangoModelFactory):
     user_id = SubFactory(UserFactory)
+    gamerooms = SubFactory(GameRoomFactory)
 
     programming_language = SubFactory(ProgrammingLanguageFactory)
     code = Faker("sentence")
@@ -29,7 +30,7 @@ class UserCodeFactory(DjangoModelFactory):
 
 class JudgementCodeFactory(DjangoModelFactory):
     user_id = SubFactory(UserFactory)
-    gameinfo_id = SubFactory(GameInfoFactory)
+    gameversion_id = SubFactory(GameVersionFactory)
 
     programming_language = SubFactory(ProgrammingLanguageFactory)
     code = Faker("sentence")

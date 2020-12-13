@@ -61,7 +61,7 @@ class UserCode(models.Model):
         User, related_name="usercodes", blank=True, null=True, on_delete=models.SET_NULL
     )
     gamerooms = models.ForeignKey(
-        GameRoom, related_name="usercodes", on_delete=models.PROTECT
+        GameRoom, related_name="usercodes", null=True, on_delete=models.PROTECT
     )
     gamematches = models.ManyToManyField(
         GameMatch, related_name="usercodes", through="MatchCodeRelation"
