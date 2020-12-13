@@ -44,8 +44,13 @@
     "fields": {
       "name": "C (GCC 7.4.0)",
       "compile_cmd": "/usr/local/gcc-7.4.0/bin/gcc",
-      "run_cmd": "./",
-      "is_active": true
+      "run_cmd": "./a.out",
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}\n{{ includes }}\n\n{{ solution }}\n\nint main(int argc, char const *argv[]) {\n  solution({{ arguments }});\n  return 0;\n}\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}\n#include <stdio.h>\n\nvoid solution({{ parameters }}) {\n    printf(\"Hello world\");\n}\n{% endautoescape %}\n"
+      },
+      "extension": "c"
     }
   },
   {
@@ -54,8 +59,13 @@
     "fields": {
       "name": "C (GCC 8.3.0)",
       "compile_cmd": "/usr/local/gcc-8.3.0/bin/gcc",
-      "run_cmd": "./",
-      "is_active": true
+      "run_cmd": "./a.out",
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}\n{{ includes }}\n\n{{ solution }}\n\nint main(int argc, char const *argv[]) {\n  solution({{ arguments }});\n  return 0;\n}\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}\n#include <stdio.h>\n\nvoid solution({{ parameters }}) {\n    printf(\"Hello world\");\n}\n{% endautoescape %}\n"
+      },
+      "extension": "c"
     }
   },
   {
@@ -64,8 +74,13 @@
     "fields": {
       "name": "C (GCC 9.2.0)",
       "compile_cmd": "/usr/local/gcc-9.2.0/bin/gcc",
-      "run_cmd": "./",
-      "is_active": true
+      "run_cmd": "./a.out",
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}\n{{ includes }}\n\n{{ solution }}\n\nint main(int argc, char const *argv[]) {\n  solution({{ arguments }});\n  return 0;\n}\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}\n#include <stdio.h>\n\nvoid solution({{ parameters }}) {\n    printf(\"Hello world\");\n}\n{% endautoescape %}\n"
+      },
+      "extension": "c"
     }
   },
   {
@@ -84,8 +99,13 @@
     "fields": {
       "name": "C++ (Clang 7.0.1)",
       "compile_cmd": "/usr/bin/clang++-7",
-      "run_cmd": "./",
-      "is_active": true
+      "run_cmd": "./a.out",
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}\n{{ includes }}\n\n{{ solution }}\n\nint main(int argc, char const *argv[]) {\n  solution({{ arguments }});\n  return 0;\n}\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}\n#include <iostream>\n\nvoid solution({{ parameters }}) {\n    printf(\"Hello world\");\n}\n{% endautoescape %}\n"
+      },
+      "extension": "cpp"
     }
   },
   {
@@ -115,7 +135,12 @@
       "name": "C++ (GCC 9.2.0)",
       "compile_cmd": "/usr/local/gcc-9.2.0/bin/g++",
       "run_cmd": "LD_LIBRARY_PATH=/usr/local/gcc-9.2.0/lib64 ./",
-      "is_active": true
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}\n{{ includes }}\n\n{{ solution }}\n\nint main(int argc, char const *argv[]) {\n  solution({{ arguments }});\n  return 0;\n}\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}\n#include <iostream>\n\nvoid solution({{ parameters }}) {\n    printf(\"Hello world\");\n}\n{% endautoescape %}\n"
+      },
+      "extension": "cpp"
     }
   },
   {
@@ -248,7 +273,8 @@
     "fields": {
       "name": "JavaScript (Node.js 12.14.0)",
       "run_cmd": "/usr/local/node-12.14.0/bin/node",
-      "is_active": true
+      "is_active": true,
+      "extension": "js"
     }
   },
   {
@@ -352,8 +378,13 @@
     "pk": 37,
     "fields": {
       "name": "Python (2.7.17)",
-      "run_cmd": "/usr/local/python-2.7.17/bin/python${VERSION%%.*} script-2.7.17.py",
-      "is_active": false
+      "run_cmd": "/usr/local/python-2.7.17/bin/python2",
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}\n{{ includes }}\n\n{{ solution }}\n\nint main(int argc, char const *argv[]) {\n  solution({{ arguments }});\n  return 0;\n}\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}\n#include <iostream>\n\nvoid solution({{ parameters }}) {\n    printf(\"Hello world\");\n}\n{% endautoescape %}\n"
+      },
+      "extension": "py"
     }
   },
   {
@@ -362,7 +393,12 @@
     "fields": {
       "name": "Python (3.8.1)",
       "run_cmd": "/usr/local/python-3.8.1/bin/python3",
-      "is_active": true
+      "is_active": true,
+      "template_code": {
+        "main": "{% autoescape off %}import sys\n{{ includes }}\n\n{{ solution }}\n\nif __name__ == \"__main__\":\n    argv = sys.argv\n    solution({{ arguments }})\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}def solution({{ parameters }}):\n    print(\"Hello\")\n{% endautoescape %}\n"
+      },
+      "extension": "py"
     }
   },
   {
