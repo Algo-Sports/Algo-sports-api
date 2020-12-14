@@ -21,6 +21,12 @@ services:
 
   redis:
     image: redis:5.0
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: algo-sports
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: redis
 
   celeryworker:
     <<: *django
