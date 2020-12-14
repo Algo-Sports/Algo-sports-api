@@ -10,9 +10,9 @@ class UserCodeFilter(filters.FilterSet):
     class Meta:
         model = UserCode
         fields = (
-            "user",
             "is_active",
             "programming_language",
+            "gamerooms",
         )
 
 
