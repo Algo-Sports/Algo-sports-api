@@ -33,7 +33,7 @@ def dev():
 
 def staging():
     env.target = STAGING
-    env.compose = "production.yml"
+    env.compose = "staging.yml"
 
 
 def prod():

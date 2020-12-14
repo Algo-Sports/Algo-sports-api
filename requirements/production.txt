@@ -3,6 +3,8 @@
 -r base.txt
 
 gunicorn==20.0.4  # https://github.com/benoitc/gunicorn
+uvloop==0.14.0
+httptools==0.1.1
 psycopg2==2.8.6  # https://github.com/psycopg/psycopg2
 Collectfast==2.2.0  # https://github.com/antonagestam/collectfast
 
