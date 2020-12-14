@@ -189,3 +189,18 @@ ecs-cli compose \
   --target-group-arn arn:aws:elasticloadbalancing:ap-northeast-2:648240308375:targetgroup/target/e3086c4f494a30c4 \
   --launch-type EC2
 ```
+
+## 부딪힌 문제들
+
+- Celery worker가 Redis를 인식 못하는 상황
+  - 로컬에서는 잘 됐지만 AWS에 배포하는 순간 작동을 하지 않아서 남감했다.
+  - docker-compose.yml의 links와 depends_on에 redis를 걸어주니까 해결됐다.
+- RDS 연결
+  - 같은 VPC에 연결이 돼있어야 한다.
+  - entrypoint.sh에서 export 한 env는 환경에 적용이 되지 않았다.
+  - .django, .postgres 파일로 해당 설정들을 옮겨주니 DATABASE_URL 환경변수도 잘 적용됐다.
+- 502 에러 (nginx, ELB)
+  - Target group을 잘 설정해야한다.
+- Domain 문제
+  - 가비아에서 주문한 도메인을 Route53에 등록한 뒤 ACM을 발급받으면 된다.
+  - 이때 *.domain.com으로 해주면 편하다.
