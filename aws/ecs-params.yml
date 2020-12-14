@@ -1,0 +1,14 @@
+version: 1
+task_definition:
+  task_execution_role: ecs-instance
+  task_size:
+    mem_limit: 512
+    cpu_limit: 256
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - "subnet-0a00bab6d3dec1b98"
+        - "subnet-024304174c7677aa4"
+      security_groups:
+        - "sg-02883320b4d5e11a9"

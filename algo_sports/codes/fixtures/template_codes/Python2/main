@@ -1,0 +1,10 @@
+{% autoescape off %}
+import sys
+{{ includes }}
+
+{{ solution }}
+
+if __name__ == "__main__":
+    argv = sys.argv
+    solution({{ arguments }})
+{% endautoescape %}

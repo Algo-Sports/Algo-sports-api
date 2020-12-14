@@ -7,11 +7,11 @@ env:
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
     paths-ignore: [ "docs/**" ]
 
   push:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
     paths-ignore: [ "docs/**" ]
 
 
@@ -56,4 +56,4 @@ jobs:
         run:  docker-compose -f local.yml exec -T django pytest
 
       - name: Tear down the Stack
-        run:  docker-compose down
+        run:  docker-compose -f local.yml down

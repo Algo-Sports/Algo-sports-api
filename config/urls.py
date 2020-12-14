@@ -1,13 +1,24 @@
+from dj_rest_auth.registration.views import ConfirmEmailView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views import defaults as default_views
-from rest_framework.authtoken.views import obtain_auth_token
+from django.views.generic import TemplateView
 
 urlpatterns = [
+    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path(
+        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
+    ),
+    # Django Admin, use {% raw %}{% url 'admin:index' %}{% endraw %}
     path(settings.ADMIN_URL, admin.site.urls),
+    # User management
+    path(
+        "users/",
+        include("algo_sports.users.urls", namespace="users"),
+    ),
     path("accounts/", include("allauth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
@@ -18,9 +29,17 @@ if settings.DEBUG:
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
-    # DRF auth token
-    path("auth-token/", obtain_auth_token),
+    path("api/auth/", include("dj_rest_auth.urls")),
+    re_path(
+        r"^api/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$",
+        ConfirmEmailView.as_view(),
+        name="account_confirm_email",
+    ),
+    path("api/auth/registration/", include("dj_rest_auth.registration.urls")),
 ]
+
+# Swagger URLS
+urlpatterns += [path("", include("config.swagger_router"))]
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit

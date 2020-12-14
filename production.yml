@@ -1,31 +1,41 @@
-version: '3'
-
-volumes:
-  production_postgres_data: {}
-  production_postgres_data_backups: {}
-  production_traefik: {}
+version: "3"
 
 services:
   django: &django
-    build:
-      context: .
-      dockerfile: ./compose/production/django/Dockerfile
-    image: algo_sports_production_django
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
-    command: /start
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: algo-sports
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: django
 
-  postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: algo_sports_production_postgres
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data:Z
-      - production_postgres_data_backups:/backups:z
-    env_file:
-      - ./.envs/.production/.postgres
+  nginx:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: algo-sports
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: nginx
+    depends_on:
+      - django
+
+  redis:
+    image: redis:5.0
+
+  celeryworker:
+    <<: *django
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: algo-sports
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: celeryworker
+
+  flower:
+    <<: *django
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: algo-sports
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: flower

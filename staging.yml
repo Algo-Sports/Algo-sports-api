@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: 648240308375.dkr.ecr.ap-northeast-2.amazonaws.com/django
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+
+  nginx:
+    build:
+      context: ./compose/production/nginx
+      dockerfile: ./Dockerfile
+    image: 648240308375.dkr.ecr.ap-northeast-2.amazonaws.com/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+    links:
+      - django
+
+  redis:
+    image: redis:5.0
+    ports:
+      - "6379:6379"
+
+  celeryworker:
+    <<: *django
+    command: /start-celeryworker
+
+  flower:
+    <<: *django
+    command: /start-flower

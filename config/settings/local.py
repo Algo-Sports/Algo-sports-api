@@ -11,7 +11,7 @@ SECRET_KEY = env(
     default="Md8Ks0BYq4ir3rj1tlsk9wp0y3RkQ1dwG5Fuk8JKBa0kSXxbna7Iyl0ALpPQ4fzh",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "testserver"]
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -52,11 +52,52 @@ if env("USE_DOCKER", default="") == "yes":
 # django-extensions
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
-INSTALLED_APPS += ["django_extensions"]  # noqa F405
+INSTALLED_APPS += [
+    "django_extensions",
+    "drf_yasg",
+]  # noqa F405
 # Celery
 # ------------------------------------------------------------------------------
 
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
-# Your stuff...
+
+# django-cors-headers
 # ------------------------------------------------------------------------------
+# https://github.com/adamchainz/django-cors-headers
+CORS_URLS_REGEX = r"^/api/.*$"
+
+# django-extensions shell_plus
+# ------------------------------------------------------------------------------
+# https://django-extensions.readthedocs.io/en/latest/shell_plus.html
+SHELL_PLUS_IMPORTS = [
+    "from algo_sports.blogs.tests.factories import *",
+    "from algo_sports.codes.tests.factories import *",
+    "from algo_sports.games.tests.factories import *",
+    "from algo_sports.users.tests.factories import *",
+]
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
+
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)

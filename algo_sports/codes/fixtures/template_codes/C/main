@@ -1,0 +1,10 @@
+{% autoescape off %}
+{{ includes }}
+
+{{ solution }}
+
+int main(int argc, char const *argv[]) {
+  solution({{ arguments }});
+  return 0;
+}
+{% endautoescape %}
