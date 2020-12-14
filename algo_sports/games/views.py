@@ -12,6 +12,7 @@ from rest_framework.mixins import (
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from algo_sports.games.filters import GameMatchFilter
 from algo_sports.utils.permissions import IsAdminOrReadOnly
 
 from .models import GameInfo, GameMatch, GameRoom, GameVersion, GameVersionType
@@ -175,6 +176,8 @@ class GameMatchViewSet(
     queryset = GameMatch.objects.all()
 
     action_serializer_classes = {}
+
+    filterset_class = GameMatchFilter
 
     def get_queryset(self):
         gamematche_ids = self.request.user.usercodes.values_list(

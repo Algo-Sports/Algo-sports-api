@@ -21,13 +21,13 @@ certificatesResolvers:
       storage: /etc/traefik/acme/acme.json
       # https://docs.traefik.io/master/https/acme/#httpchallenge
       httpChallenge:
-        entryPoint: web
+        entryPoint: web-secure
 
 http:
   routers:
     web-router:
-      rule: "Host(`algosports.com`) || Host(`www.algosports.com`)"
-      
+      rule: "Host(`asports.kr`) || Host(`www.asports.kr`)"
+
       entryPoints:
         - web
       middlewares:
@@ -36,8 +36,8 @@ http:
       service: django
 
     web-secure-router:
-      rule: "Host(`algosports.com`) || Host(`www.algosports.com`)"
-      
+      rule: "Host(`asports.kr`) || Host(`www.asports.kr`)"
+
       entryPoints:
         - web-secure
       middlewares:
@@ -48,7 +48,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`algosports.com`)"
+      rule: "Host(`asports.kr`)"
       entryPoints:
         - flower
       service: flower
