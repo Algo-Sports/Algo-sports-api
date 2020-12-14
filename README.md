@@ -86,7 +86,7 @@ mypy .
 ```shell
 # 환경변수 설정
 AWS_DEFAULT_REGION=ap-northeast-2
-CLUSTER_NAME=algo-cluster
+CLUSTER_NAME=algo-cluster2
 CONFIG_NAME=algo-config
 PROFILE_NAME=algo-profile
 INSTANCE_SIZE=3
@@ -186,6 +186,6 @@ ecs-cli compose \
   --cluster-config $CONFIG_NAME \
   --container-name nginx \
   --container-port 80 \
-  --target-group-arn arn:aws:elasticloadbalancing:ap-northeast-2:648240308375:targetgroup/ecs-algo-c-dasdf/45984f4d255050ad \
+  --target-group-arn arn:aws:elasticloadbalancing:ap-northeast-2:648240308375:targetgroup/target/e3086c4f494a30c4 \
   --launch-type EC2
 ```
