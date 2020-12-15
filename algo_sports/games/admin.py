@@ -60,7 +60,6 @@ class GameMatchAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "gameroom_id",
-        "history",
         "score",
         "status",
         "created_at",
