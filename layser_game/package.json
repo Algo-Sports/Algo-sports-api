@@ -1,0 +1,16 @@
+{
+  "name": "laser_game_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@flatten-js/core": "^1.2.17",
+    "fs": "0.0.1-security",
+    "process": "^0.11.10"
+  }
+}

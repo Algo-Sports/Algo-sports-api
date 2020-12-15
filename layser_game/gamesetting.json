@@ -1,0 +1,35 @@
+{
+  "canvas": {
+    "width": 1000,
+    "height": 800
+  },
+  "ball": {
+    "color": "#78E1D6",
+    "radius": 20,
+    "strokecolor": "black",
+    "strokesize": 6,
+    "num": 10
+  },
+  "laser": {
+    "x": 900,
+    "y": 400,
+    "vector": {
+      "x": -1,
+      "y": 0
+    },
+    "color": "red"
+  },
+  "plate": {
+    "color": "yellow",
+    "width": 100,
+    "height": 20
+  },
+  "wave": {
+    "color": "rgba(31, 38, 59, 0.7)",
+    "speed": 0.1,
+    "nums": 15,
+    "startpoint": 200,
+    "pinspeed": 0.6
+  },
+  "maxlap": 10
+}

@@ -1,0 +1,48 @@
+{
+  "includes": {
+    "Python (3.8.1)": [
+      "import json"
+    ],
+    "C++ (GCC 9.2.0)": [
+      "#include <string>"
+    ],
+    "C (GCC 9.2.0)": [],
+    "JavaScript (Node.js 12.14.0)": []
+  },
+  "arguments": {
+    "Python (3.8.1)": [
+      "read_json(argv[1])",
+      "read_json(argv[2])"
+    ],
+    "C++ (GCC 9.2.0)": [
+      "argv[1]",
+      "argv[2]"
+    ],
+    "C (GCC 9.2.0)": [
+      "argv[1]",
+      "argv[2]"
+    ],
+    "JavaScript (Node.js 12.14.0)": [
+      "argv[1]",
+      "argv[2]"
+    ]
+  },
+  "parameters": {
+    "Python (3.8.1)": [
+      "gameinfo: dict",
+      "user_result: list"
+    ],
+    "C++ (GCC 9.2.0)": [
+      "string gameinfo",
+      "string user_result"
+    ],
+    "C (GCC 9.2.0)": [
+      "const char* gameinfo",
+      "const char* user_result"
+    ],
+    "JavaScript (Node.js 12.14.0)": [
+      "gameinfo",
+      "user_result"
+    ]
+  }
+}

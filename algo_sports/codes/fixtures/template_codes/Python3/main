@@ -1,8 +1,13 @@
 {% autoescape off %}
+import json
 import sys
 {{ includes }}
 
 {{ solution }}
+
+def read_json(path):
+    with open(path) as f:
+        return json.load(f)
 
 if __name__ == "__main__":
     argv = sys.argv

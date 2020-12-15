@@ -1,0 +1,10 @@
+{% autoescape off %}
+const process = require("process");
+const flatten = require("@flatten-js/core");
+
+{{ solution }}
+
+const argv = process.argv
+solution();
+
+{% endautoescape %}

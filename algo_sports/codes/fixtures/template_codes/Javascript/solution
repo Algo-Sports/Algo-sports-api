@@ -1,0 +1,5 @@
+{% autoescape off %}
+function solution({{ parameters }}){
+    console.log("Hello world");
+}
+{% endautoescape %}

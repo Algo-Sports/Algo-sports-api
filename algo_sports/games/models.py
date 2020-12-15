@@ -295,6 +295,14 @@ class GameMatch(models.Model):
         related_name="game_matchs",
     )
 
+    winner = models.ForeignKey(
+        User,
+        verbose_name=_("Match winner"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="win_matchs",
+    )
     history = models.JSONField(
         _("History in Game Match"),
         blank=True,

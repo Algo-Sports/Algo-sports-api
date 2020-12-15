@@ -392,11 +392,11 @@
     "pk": 38,
     "fields": {
       "name": "Python (3.8.1)",
-      "run_cmd": "/usr/local/python-3.8.1/bin/python3",
+      "run_cmd": "python3",
       "is_active": true,
       "template_code": {
-        "main": "{% autoescape off %}import sys\n{{ includes }}\n\n{{ solution }}\n\nif __name__ == \"__main__\":\n    argv = sys.argv\n    solution({{ arguments }})\n{% endautoescape %}\n",
-        "solution": "{% autoescape off %}def solution({{ parameters }}):\n    print(\"Hello\")\n{% endautoescape %}\n"
+        "main": "{% autoescape off %}import json, sys\n{{ includes }}\n\n{{ solution }}\n\ndef read_json(path):\n  with open(path, encoding='utf-8',) as f:\n    return json.load(f)\n\nif __name__ == \"__main__\":\n    argv = sys.argv\n    solution({{ arguments }})\n{% endautoescape %}\n",
+        "solution": "{% autoescape off %}}def solution({{ parameters }}):\n    print(\"Hello\")\n{% endautoescape %}\n"
       },
       "extension": "py"
     }

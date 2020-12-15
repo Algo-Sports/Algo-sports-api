@@ -194,5 +194,7 @@ LOGGING = {
     },
 }
 
-# Your stuff...
-# ------------------------------------------------------------------------------
+CORS_ALLOWED_ORIGINS = [
+    "https://asports.kr",
+    "https://api.asports.kr",
+]
