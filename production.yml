@@ -16,8 +16,6 @@ services:
         awslogs-group: algo-sports
         awslogs-region: ap-northeast-2
         awslogs-stream-prefix: nginx
-    depends_on:
-      - django
 
   redis:
     image: redis:5.0
