@@ -179,14 +179,14 @@ def run_match(match_data):
     if winners[0] == 1 and winners[1] == 1:
         winner = "draw"
     elif winners[0] == 1:
-        winner = "user1"
+        winner = competitors[0].user.username
         match.winner = competitors[0].user
     else:
-        winner = "user2"
+        winner = competitors[0].user.username
         match.winner = competitors[1].user
 
     match.history = {
-        "user1": {
+        f"{competitors[0].user.id}": {
             "me": "user1",
             "winner": winner,
             "lap": lap,
@@ -196,7 +196,7 @@ def run_match(match_data):
                 "userresult": user_final[0],
             },
         },
-        "user2": {
+        f"{competitors[1].user.id}": {
             "me": "user2",
             "winner": winner,
             "lap": lap,

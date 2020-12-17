@@ -1,5 +1,5 @@
 from .base import *  # noqa
-from .base import env
+from .base import REST_FRAMEWORK, env
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -197,4 +197,11 @@ LOGGING = {
 CORS_ALLOWED_ORIGINS = [
     "https://asports.kr",
     "https://api.asports.kr",
+]
+
+# django restframework
+# ------------------------------------------------------------------------------
+# renderer - https://www.django-rest-framework.org/api-guide/renderers/
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+    "rest_framework.renderers.JSONRenderer",
 ]

@@ -1,4 +1,3 @@
-FROM judge0/compilers
 FROM python:3.8-slim-buster
 
 ENV PYTHONUNBUFFERED 1
@@ -9,18 +8,26 @@ RUN apt-get update \
   # psycopg2 dependencies
   && apt-get install -y libpq-dev \
   # Translations dependencies
-  && apt-get install -y gettext \
+  && apt-get install -y gettext
+
+# curl
+RUN apt-get install -y curl \
+  # g++
+  && apt-get install g++ \
+  # nodejs
+  && apt-get install -y nodejs \
+  && apt-get install -y npm \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system django \
-    && adduser --system --ingroup django django
+  && adduser --system --ingroup django django
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --no-cache-dir -r /requirements/production.txt \
-    && rm -rf /requirements
+  && rm -rf /requirements
 
 COPY --chown=django:django ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
