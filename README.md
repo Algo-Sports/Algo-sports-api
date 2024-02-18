@@ -1,63 +1,78 @@
 # AlgoSports Backend
 
+알고리즘을 게임처럼 즐기면서 공부할 수 있도록 도와주는 알고리즘 게임 플랫폼 AlgoSports의 백엔드 저장소입니다.
+
+- [AlgoSports Backend](#algosports-backend)
+  - [Development](#development)
+    - [브랜치 컨벤션](#브랜치-컨벤션)
+    - [설치](#설치)
+    - [서버 실행하기](#서버-실행하기)
+    - [테스팅](#테스팅)
+    - [명령어 모음 도구](#명령어-모음-도구)
+  - [Build \& Deploy](#build--deploy)
+    - [사전 준비물](#사전-준비물)
+    - [ECS-CLI로 클러스터 생성](#ecs-cli로-클러스터-생성)
+    - [Security Group 생성 및 80포트 오픈](#security-group-생성-및-80포트-오픈)
+    - [ECR 로그인 및 레포지토리 생성](#ecr-로그인-및-레포지토리-생성)
+    - [ECR 저장소 이미지 배포](#ecr-저장소-이미지-배포)
+    - [ECS Task IAM role 생성](#ecs-task-iam-role-생성)
+    - [서비스 생성](#서비스-생성)
+  - [Trouble shootings](#trouble-shootings)
+    - [Celery Worker가 Redis를 인식하지 못함](#celery-worker가-redis를-인식하지-못함)
+    - [RDS 연결](#rds-연결)
+    - [Nginx와 ELB를 사용할 때 502 오류](#nginx와-elb를-사용할-때-502-오류)
+
 ## Development
 
-### Branch
+### 브랜치 컨벤션
 
-- 아래 포스트의 convention을 일부 차용해서 사용한다.
-  - https://dev.to/couchcamote/git-branching-name-convention-cch
+[브랜치 컨벤션 참고자료](https://dev.to/couchcamote/git-branching-name-convention-cch)
 
-1. master
-   - 실제 배포
-2. develop
-   - 개발 및 테스트
+1. `master`: 실제 배포에 사용되는 브랜치
+2. `develop`: 개발 및 테스트에 사용되는 브랜치
 3. temporary branches
+   - `feat/<branch_name>`:기능 개발을 다루는 branch.
+   - `bugfix/<branch_name>`: feature에서 발생한 버그를 다루는 branch.
+   - `hotfix/<branch_name>`: master 브랜치에 바로 반영해야하는 버그를 다루는 branch.
 
-   - feat/<branch_name>
-     - 기능 개발을 다루는 branch.
-   - bugfix/<branch_name>
-     - feature에서 발생한 버그를 다루는 branch.
-   - hotfix/<branch_name>
-     - master 브랜치에 바로 반영해야하는 버그를 다루는 branch.
-   - experimental/<branch_name>
-     - 테스트하고 싶은 기능을 다루는 branch.
+### 설치
 
-### Installation
+1. 가상환경 활성화
 
-1. Activate virtual environment
-2. Install packages
-   ```shell
-   pip install -r requirements/local.txt
-   ```
+```
+python -m venv venv
+source venv/bin/activate
+```
 
-### Utility
+2. 패키지 설치
 
-- 아래 커맨드로 확인 가능
+```shell
+pip install -r requirements/local.txt
+```
+
+### 서버 실행하기
+
+```shell
+docker compose -f local.yml up -d
+```
+
+### 테스팅
+
+```shell
+# pytest
+docker compose -f local.yml exec -T django coverage run -m pytest
+
+# coverage
+docker compose -f local.yml exec -T django coverage run -m pytest
+docker compose -f local.yml exec -T django coverage report
+```
+
+### 명령어 모음 도구
+
+아래 명령어를 통해서 사용할 수 있는 명령어 목록을 확인할 수 있습니다.
 
 ```shell
 fab -l
-```
-
-### Start local server
-
-- API 서버
-  ```shell
-  fab runserver
-  ```
-- Celery broker
-  ```shell
-  redis-server
-  ```
-- Celery worker
-  ```shell
-  fab celery
-  ```
-
-### Test
-
-```shell
-pytest .
-mypy .
 ```
 
 ## Build & Deploy
@@ -190,17 +205,26 @@ ecs-cli compose \
   --launch-type EC2
 ```
 
-## 부딪힌 문제들
+## Trouble shootings
 
-- Celery worker가 Redis를 인식 못하는 상황
-  - 로컬에서는 잘 됐지만 AWS에 배포하는 순간 작동을 하지 않아서 남감했다.
-  - docker-compose.yml의 links와 depends_on에 redis를 걸어주니까 해결됐다.
-- RDS 연결
-  - 같은 VPC에 연결이 돼있어야 한다.
-  - entrypoint.sh에서 export 한 env는 환경에 적용이 되지 않았다.
-  - .django, .postgres 파일로 해당 설정들을 옮겨주니 DATABASE_URL 환경변수도 잘 적용됐다.
-- 502 에러 (nginx, ELB)
-  - Target group을 잘 설정해야한다.
-- Domain 문제
-  - 가비아에서 주문한 도메인을 Route53에 등록한 뒤 ACM을 발급받으면 된다.
-  - 이때 *.domain.com으로 해주면 편하다.
+### Celery Worker가 Redis를 인식하지 못함
+
+- **문제 상황**: AWS에 배포 후 로컬에서는 작동하던 Celery worker들이 Redis를 인식하지 못함
+- **해결 방안**:
+  - `docker-compose.yml` 파일에서 `redis`를 `links`와 `depends_on` 섹션에 모두 지정하여 문제를 해결함
+  - Celery worker들이 Redis 서비스가 활성화된 후 실행되는 것을 보장함
+
+### RDS 연결
+
+- **문제 상황**: 애플리케이션이 RDS 인스턴스에 연결하지 못함
+- **해결 방안**:
+  - 애플리케이션과 RDS 인스턴스가 모두 같은 VPC 내에 있도록 설정함
+  - 그럼에도 문제가 발생한다면 제대로 연결을 요청하고 있는지 확인이 필요함
+  - `entrypoint.sh`에서 내보낸 환경 변수가 적용되지 않았던 것이도 문제였어서 환경 변수를 `.django` 및 `.postgres`로 분리하기 `DATABASE_URL` 환경 변수를 설정하여 문제를 해결했음
+
+### Nginx와 ELB를 사용할 때 502 오류
+
+- **문제 상황**: Nginx와 Elastic Load Balancer(ELB)를 통해 애플리케이션에 접근하려고 할 때 502 오류 발생
+- **해결 방안**:
+  - ECS tasks의 상태가 unhealthy 하여 문제가 발생함
+  - ELB의 target group의 health check 설정을 변경하거나 nginx에서 200 OK 만을 반환하는 health check 라우트를 만들어 해결
